@@ -1,15 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { unstable_cache } from "next/cache";
 import FestivalCard from "@/components/FestivalCard";
 import { getUpcomingFestivals } from "@/lib/queries";
 import { monthLabel, monthSlug, monthsWithFestivals } from "@/lib/months";
 
-export const revalidate = 3600;
+// Deze route is dynamisch (searchParams is een Dynamic API in Next 15), dus
+// route-level ISR via `export const revalidate` werkt hier niet. In plaats
+// daarvan cachen we de data-fetch zelf in de Data Cache (max 1 uur oud —
+// dezelfde versheid als de ISR-pagina's). Let op: todayAmsterdam() draait
+// bínnen getUpcomingFestivals, dus "vandaag" bevriest maximaal een uur mee.
+const getCachedUpcomingFestivals = unstable_cache(
+  () => getUpcomingFestivals(),
+  ["festivals-overzicht"],
+  { revalidate: 3600 }
+);
 
 export const metadata: Metadata = {
   title: "Alle festivals in Nederland (2026)",
   description:
     "Overzicht van alle grote Nederlandse festivals met data, locaties en de laagste ticketprijzen. Filter op maand, genre of provincie.",
+  alternates: { canonical: "/festivals" },
 };
 
 interface Search { q?: string; maand?: string; genre?: string; provincie?: string }
@@ -20,7 +31,7 @@ export default async function FestivalsPage({
   searchParams: Promise<Search>;
 }) {
   const { q, maand, genre, provincie } = await searchParams;
-  const alle = await getUpcomingFestivals();
+  const alle = await getCachedUpcomingFestivals();
 
   const term = q?.toLowerCase().trim();
   const festivals = alle.filter((f) => {
@@ -54,25 +65,25 @@ export default async function FestivalsPage({
       <div className="mt-6 flex flex-col gap-3 text-sm">
         <div className="flex flex-wrap items-center gap-2">
           <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Maand</span>
-          <Link href={filterLink({ maand: undefined })} className={!maand ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
+          <Link href={filterLink({ maand: undefined })} aria-current={!maand ? "true" : undefined} className={!maand ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
           {maanden.map((m) => (
-            <Link key={m} href={filterLink({ maand: m })} className={maand === m ? "font-bold text-accent" : "text-mut hover:text-ink"}>
+            <Link key={m} href={filterLink({ maand: m })} aria-current={maand === m ? "true" : undefined} className={maand === m ? "font-bold text-accent" : "text-mut hover:text-ink"}>
               {monthLabel(m)}
             </Link>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Genre</span>
-          <Link href={filterLink({ genre: undefined })} className={!genre ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
+          <Link href={filterLink({ genre: undefined })} aria-current={!genre ? "true" : undefined} className={!genre ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
           {genres.map((g) => (
-            <Link key={g} href={filterLink({ genre: g })} className={genre === g ? "font-bold text-accent" : "text-mut hover:text-ink"}>{g}</Link>
+            <Link key={g} href={filterLink({ genre: g })} aria-current={genre === g ? "true" : undefined} className={genre === g ? "font-bold text-accent" : "text-mut hover:text-ink"}>{g}</Link>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Provincie</span>
-          <Link href={filterLink({ provincie: undefined })} className={!provincie ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
+          <Link href={filterLink({ provincie: undefined })} aria-current={!provincie ? "true" : undefined} className={!provincie ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
           {provincies.map((p) => (
-            <Link key={p} href={filterLink({ provincie: p })} className={provincie === p ? "font-bold text-accent" : "text-mut hover:text-ink"}>{p}</Link>
+            <Link key={p} href={filterLink({ provincie: p })} aria-current={provincie === p ? "true" : undefined} className={provincie === p ? "font-bold text-accent" : "text-mut hover:text-ink"}>{p}</Link>
           ))}
         </div>
       </div>

@@ -24,9 +24,9 @@ export default async function Home() {
           </p>
           <h1 className="display mt-3 max-w-[12ch] text-5xl sm:text-7xl">
             Nooit te veel betalen voor een{" "}
-            <em className="bg-gradient-to-r from-accent-deep to-accent bg-clip-text not-italic text-transparent">
+            <span className="bg-gradient-to-r from-accent-deep to-accent bg-clip-text text-transparent">
               festival.
-            </em>
+            </span>
           </h1>
           <p className="mt-4 max-w-xl text-mut">
             Vergelijk ticketprijzen van officiële verkoop én doorverkoop voor alle grote
@@ -38,7 +38,7 @@ export default async function Home() {
               name="q"
               placeholder="Zoek een festival, stad of genre…"
               aria-label="Zoek een festival"
-              className="min-w-0 flex-1 bg-transparent px-3.5 py-3 text-ink placeholder:text-mut focus:outline-none"
+              className="min-w-0 flex-1 rounded-sm bg-transparent px-3.5 py-3 text-ink placeholder:text-mut focus:outline-2 focus:outline-offset-2 focus:outline-accent"
             />
             <button className="rounded-sm bg-accent px-6 font-bold text-ground">Zoek</button>
           </form>

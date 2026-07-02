@@ -47,7 +47,7 @@ eigen spec en implementatieplan.
 |---|---|---|
 | `/` | Uitgelichte + eerstvolgende festivals, zoekveld, links naar landingspagina's | WebSite schema, meta |
 | `/festivals/` | Alle gepubliceerde festivals; filters: maand, genre, provincie (URL-querystring) | ItemList schema |
-| `/festivals/[slug]/` | Hero met afbeelding/datum/locatie, beschrijving, line-up (vrij tekstveld), ticketvergelijker, FAQ-blok, gerelateerde festivals | Event + FAQPage + BreadcrumbList schema |
+| `/festivals/[slug]/` | Hero met afbeelding/datum/locatie, beschrijving, line-up (indien gevuld), ticketvergelijker, FAQ-blok (automatisch opgebouwd uit de festivaldata: wanneer, waar, vanaf-prijs, uitverkocht-status), gerelateerde festivals | Event + FAQPage + BreadcrumbList schema |
 | `/goedkope-festivaltickets/` | Landingspagina met intro-tekst + festivals gesorteerd op laagste vanaf-prijs | Meta + ItemList |
 | `/last-minute-festivals/` | Landingspagina: festivals die binnen 30 dagen starten | Meta + ItemList |
 | `/agenda/[maand-jaar]/` | bv. `/agenda/juli-2026/`: festivals in die maand; alleen maanden met ≥1 festival bestaan | Meta + ItemList |
@@ -69,6 +69,7 @@ Alle uitgaande ticketlinks krijgen `rel="sponsored nofollow"` en lopen via `/uit
 | name | text | |
 | description | text | 150–400 woorden, uniek per festival |
 | genres | text[] | bv. `{hardstyle, techno}` |
+| lineup | text nullable | vrij tekstveld met namen; leeg = line-upsectie verborgen |
 | city | text | |
 | venue | text nullable | terrein/locatienaam |
 | province | text | NL-provincie |

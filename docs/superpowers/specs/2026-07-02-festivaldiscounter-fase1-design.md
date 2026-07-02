@@ -126,6 +126,29 @@ van het festival toont het blok een uitverkocht-melding met doorverkoop-aanbiede
 3. Eigenaar controleert per festival in het Supabase-dashboard en zet `published = true`.
 4. Beschrijvingen zijn uniek geschreven (geen gekopieerde teksten van festivalsites).
 
+## Visuele richting ("Nachtprogramma + vertrouwen")
+
+Gekozen uit drie uitgewerkte mockup-richtingen (zie artifact "FestivalDiscounter —
+Designrichtingen", versie `eerste-drie-richtingen`, 2026-07-02):
+
+- **Basis: richting A "Nachtprogramma".** Donker groen-zwart interface met teal als
+  lichtaccent. Kleurtokens: ground `#061410`, panel `#0B211A`, lijn `#1B3A30`,
+  tekst `#EAF4EF`, gedempt `#8FA99D`, accent `#60DBCC` (merk-teal), accent-diep
+  `#2E8F82`. CTA-knoppen: teal vlak met donkere tekst.
+- **Gemengd uit richting B "Daglicht": de vertrouwenselementen** in de
+  ticketvergelijker: "Laagste prijs"-badge op de voordeligste aanbieder, prominente
+  peildatum ("prijs gecheckt op …"), prijsdaling-indicatoren, en de disclaimer-regel
+  onder de vergelijker.
+- **Typografie:** kopregels in merkletter **Built Titling** (licentie regelen vóór
+  livegang; webfont-bestand self-hosted). Fallback-stack: Avenir Next Condensed /
+  Arial Narrow. Lopende tekst: systeem-sans (Avenir Next / system-ui).
+- **Logo:** bestaand diamant-monogram (gradient `#021802` → `#60DBCC`) uit
+  `Festivaldiscounter-logo inspitratie/vector/`.
+- **Leesbaarheid:** lange gidsartikelen krijgen binnen het donkere thema een rustiger
+  leeskolom (max ~65 tekens breed, verhoogde regelafstand); contrast minimaal WCAG AA.
+- **Uitvoering:** de frontend wordt gebouwd met de `design-taste-frontend`-skill als
+  leidraad (anti-generieke-patronen-audit, consistent design-systeem in Tailwind-tokens).
+
 ## Foutafhandeling
 
 - Onbekende slug → 404 met suggesties.

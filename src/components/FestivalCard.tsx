@@ -12,7 +12,13 @@ export default function FestivalCard({ festival }: { festival: FestivalWithOffer
       <div className="relative h-36 bg-gradient-to-br from-accent-deep to-accent">
         {festival.image_url && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={festival.image_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src={festival.image_url}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         )}
         <span className="absolute left-3 top-3 rounded-sm bg-ground/85 px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest text-accent">
           {formatDateRange(festival.start_date, festival.end_date)}

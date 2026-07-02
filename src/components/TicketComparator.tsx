@@ -8,9 +8,9 @@ function sortOffers(offers: TicketOffer[], soldOutFestival: boolean): TicketOffe
   return [...offers].sort((a, b) => {
     if (soldOutFestival) {
       // doorverkoop eerst bij uitverkochte festivals
-      const aResale = a.provider === "official" ? 1 : 0;
-      const bResale = b.provider === "official" ? 1 : 0;
-      if (aResale !== bResale) return aResale - bResale;
+      const aOfficial = a.provider === "official" ? 1 : 0;
+      const bOfficial = b.provider === "official" ? 1 : 0;
+      if (aOfficial !== bOfficial) return aOfficial - bOfficial;
     }
     const ap = a.price_from == null || a.availability === "sold_out" ? Infinity : Number(a.price_from);
     const bp = b.price_from == null || b.availability === "sold_out" ? Infinity : Number(b.price_from);
@@ -23,7 +23,7 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
   const laagste = minPrice(offers);
   const peildatum = offers.length
     ? formatCheckedDate(
-        offers.map((o) => o.last_checked_at).sort().at(-1)!
+        offers.map((o) => o.last_checked_at).sort((a, b) => Date.parse(a) - Date.parse(b)).at(-1)!
       )
     : null;
 
@@ -42,12 +42,12 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
         <p className="text-mut">Nog geen ticketaanbieders bekend voor dit festival.</p>
       )}
 
-      <div className="flex flex-col gap-2.5">
+      <ul className="flex flex-col gap-2.5">
         {offers.map((o) => {
           const isLaagste = laagste != null && o.price_from != null &&
             Number(o.price_from) === laagste && o.availability !== "sold_out";
           return (
-            <div
+            <li
               key={o.id}
               className={`relative grid grid-cols-2 items-center gap-3 rounded border px-4 py-3.5 sm:grid-cols-[1.4fr_1fr_1fr_auto] ${
                 isLaagste ? "border-accent bg-accent/5" : "border-line"
@@ -83,14 +83,15 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
               <a
                 href={`/uit/${o.id}`}
                 rel="sponsored nofollow"
-                className="rounded-sm bg-accent px-5 py-2.5 text-center text-sm font-bold text-ground hover:bg-accent-deep hover:text-ink"
+                aria-label={`Bekijk tickets bij ${PROVIDER_LABELS[o.provider]}`}
+                className="rounded-sm bg-accent px-5 py-2.5 text-center text-sm font-bold text-ground hover:bg-accent-deep"
               >
                 Bekijk tickets
               </a>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
 
       <p className="mt-4 text-xs text-mut">
         Prijzen kunnen afwijken op de site van de aanbieder. Links kunnen affiliate-links zijn — jij betaalt nooit meer.

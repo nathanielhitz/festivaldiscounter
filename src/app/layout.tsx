@@ -3,8 +3,16 @@ import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
+function safeSiteUrl(): URL {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000");
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: safeSiteUrl(),
   title: {
     default: "FestivalDiscounter.nl — Festivaltickets vergelijken",
     template: "%s · FestivalDiscounter.nl",
@@ -25,8 +33,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       </head>
       <body className="flex min-h-screen flex-col">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-panel focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-accent focus:outline-2 focus:outline-offset-2 focus:outline-accent"
+        >
+          Direct naar inhoud
+        </a>
         <SiteHeader />
-        <div className="flex-1">{children}</div>
+        <div id="main" className="flex-1">{children}</div>
         <SiteFooter />
       </body>
     </html>

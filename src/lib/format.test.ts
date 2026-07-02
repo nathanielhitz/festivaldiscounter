@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDateRange, formatPrice, formatCheckedDate, minPrice, PROVIDER_LABELS } from "@/lib/format";
+import { formatDateRange, formatPrice, formatCheckedDate, minPrice, cheapestOffer, PROVIDER_LABELS } from "@/lib/format";
 
 describe("formatDateRange", () => {
   it("toont één datum bij een eendaags festival", () => {
@@ -59,6 +59,31 @@ describe("minPrice", () => {
   });
   it("geeft null bij een lege lijst", () => {
     expect(minPrice([])).toBeNull();
+  });
+});
+
+describe("cheapestOffer", () => {
+  it("geeft de goedkoopste bruikbare offer terug", () => {
+    const goedkoopste = { price_from: 240, availability: "available" as const, provider: "ticketswap" };
+    expect(
+      cheapestOffer([
+        { price_from: 260, availability: "limited" as const, provider: "official" },
+        goedkoopste,
+        { price_from: 100, availability: "sold_out" as const, provider: "gigsberg" },
+        { price_from: null, availability: "available" as const, provider: "ticombo" },
+      ])
+    ).toBe(goedkoopste);
+  });
+  it("geeft null zonder bruikbare offers", () => {
+    expect(
+      cheapestOffer([
+        { price_from: 100, availability: "sold_out" as const },
+        { price_from: null, availability: "available" as const },
+      ])
+    ).toBeNull();
+  });
+  it("geeft null bij een lege lijst", () => {
+    expect(cheapestOffer([])).toBeNull();
   });
 });
 

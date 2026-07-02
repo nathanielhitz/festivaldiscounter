@@ -38,13 +38,20 @@ export function formatCheckedDate(iso: string): string {
   }).format(new Date(iso));
 }
 
+// Goedkoopste offer met bruikbare prijs (uitverkochte en prijsloze offers tellen niet mee).
+export function cheapestOffer<T extends { price_from: number | null; availability: Availability }>(
+  offers: T[]
+): T | null {
+  const bruikbaar = offers.filter((o) => o.price_from != null && o.availability !== "sold_out");
+  if (!bruikbaar.length) return null;
+  return bruikbaar.reduce((a, b) => (Number(b.price_from) < Number(a.price_from) ? b : a));
+}
+
 export function minPrice(
   offers: Array<{ price_from: number | null; availability: Availability }>
 ): number | null {
-  const prijzen = offers
-    .filter((o) => o.price_from != null && o.availability !== "sold_out")
-    .map((o) => Number(o.price_from));
-  return prijzen.length ? Math.min(...prijzen) : null;
+  const goedkoopste = cheapestOffer(offers);
+  return goedkoopste ? Number(goedkoopste.price_from) : null;
 }
 
 export const PROVIDER_LABELS: Record<Provider, string> = {

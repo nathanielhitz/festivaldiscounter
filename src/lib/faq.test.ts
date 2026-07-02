@@ -27,6 +27,13 @@ describe("buildFaq", () => {
     expect(faq[2].answer).toContain("€ 240");
     expect(faq[2].answer).toContain("TicketSwap");
     expect(faq[3].answer).toContain("niet uitverkocht");
+    expect(faq[3].answer).toContain("op deze pagina");
+    expect(faq[3].answer).not.toContain("hierboven");
+  });
+
+  it("noemt geen venue in het locatie-antwoord als die ontbreekt", () => {
+    const faq = buildFaq({ ...festival, venue: null }, offers);
+    expect(faq[1].answer).toBe("Lowlands vindt plaats in Biddinghuizen (Flevoland).");
   });
 
   it("laat de prijsvraag weg zonder bruikbare prijs", () => {
@@ -36,6 +43,30 @@ describe("buildFaq", () => {
 
   it("meldt uitverkocht bij status sold_out", () => {
     const faq = buildFaq({ ...festival, status: "sold_out" }, offers);
+    expect(faq.at(-1)!.question).toBe("Is Lowlands uitverkocht?");
     expect(faq.at(-1)!.answer).toContain("officieel uitverkocht");
+  });
+
+  it("vervangt de uitverkocht-vraag bij status cancelled", () => {
+    const faq = buildFaq({ ...festival, status: "cancelled" }, offers);
+    const vragen = faq.map((f) => f.question);
+    expect(vragen).not.toContain("Is Lowlands uitverkocht?");
+    expect(faq.at(-1)!.question).toBe("Gaat Lowlands nog door?");
+    expect(faq.at(-1)!.answer).toContain("afgelast");
+    expect(faq.at(-1)!.answer).toContain("terugbetaling");
+  });
+
+  it("laat de uitverkocht-vraag helemaal weg bij status past", () => {
+    const faq = buildFaq({ ...festival, status: "past" }, offers);
+    const vragen = faq.map((f) => f.question);
+    expect(vragen).not.toContain("Is Lowlands uitverkocht?");
+    expect(vragen).not.toContain("Gaat Lowlands nog door?");
+  });
+
+  it("meldt bij status announced dat de verkoop nog niet is gestart", () => {
+    const faq = buildFaq({ ...festival, status: "announced" }, offers);
+    expect(faq.at(-1)!.question).toBe("Is Lowlands uitverkocht?");
+    expect(faq.at(-1)!.answer).toBe("Nee — de kaartverkoop voor Lowlands is nog niet gestart.");
+    expect(faq.at(-1)!.answer).not.toContain("aanbieders");
   });
 });

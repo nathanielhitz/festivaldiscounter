@@ -3,7 +3,7 @@ import { buildEventSchema, buildFaqSchema, buildBreadcrumbSchema } from "@/lib/s
 import type { Festival, TicketOffer } from "@/lib/types";
 
 const festival = {
-  name: "Lowlands", description: "Drie dagen muziek.", city: "Biddinghuizen",
+  name: "Lowlands", slug: "lowlands", description: "Drie dagen muziek.", city: "Biddinghuizen",
   venue: "Walibi", province: "Flevoland", country: "NL",
   start_date: "2026-08-21", end_date: "2026-08-23", status: "tickets_live",
   image_url: null,
@@ -19,12 +19,54 @@ describe("buildEventSchema", () => {
     const s = buildEventSchema(festival, offers, "https://festivaldiscounter.nl");
     expect(s["@type"]).toBe("Festival");
     expect(s.eventStatus).toBe("https://schema.org/EventScheduled");
+    expect(s.eventAttendanceMode).toBe("https://schema.org/OfflineEventAttendanceMode");
+    expect(s.url).toBe("https://festivaldiscounter.nl/festivals/lowlands");
     expect(s.offers).toHaveLength(1); // prijsloze offer weggelaten
-    expect(s.offers[0].url).toBe("https://festivaldiscounter.nl/uit/abc");
+    expect(s.offers![0].url).toBe("https://festivaldiscounter.nl/uit/abc");
+    expect(s.offers![0].availability).toBe("https://schema.org/InStock");
   });
-  it("markeert afgelaste festivals", () => {
+
+  it("markeert afgelaste festivals en laat lege offers weg", () => {
     const s = buildEventSchema({ ...festival, status: "cancelled" }, [], "https://x.nl");
     expect(s.eventStatus).toBe("https://schema.org/EventCancelled");
+    expect(s).not.toHaveProperty("offers");
+  });
+
+  it("mapt limited naar LimitedAvailability", () => {
+    const s = buildEventSchema(
+      festival,
+      [{ id: "abc", price_from: 260, currency: "EUR", availability: "limited" }] as TicketOffer[],
+      "https://x.nl"
+    );
+    expect(s.offers![0].availability).toBe("https://schema.org/LimitedAvailability");
+  });
+
+  it("mapt sold_out naar SoldOut", () => {
+    const s = buildEventSchema(
+      festival,
+      [{ id: "abc", price_from: 260, currency: "EUR", availability: "sold_out" }] as TicketOffer[],
+      "https://x.nl"
+    );
+    expect(s.offers![0].availability).toBe("https://schema.org/SoldOut");
+  });
+
+  it("laat availability weg bij unknown, ook met prijs", () => {
+    const s = buildEventSchema(
+      festival,
+      [{ id: "abc", price_from: 260, currency: "EUR", availability: "unknown" }] as TicketOffer[],
+      "https://x.nl"
+    );
+    expect(s.offers).toHaveLength(1);
+    expect(s.offers![0]).not.toHaveProperty("availability");
+  });
+
+  it("rondt de offer-prijs af op centen", () => {
+    const s = buildEventSchema(
+      festival,
+      [{ id: "abc", price_from: 240.567, currency: "EUR", availability: "available" }] as TicketOffer[],
+      "https://x.nl"
+    );
+    expect(s.offers![0].price).toBe(240.57);
   });
 });
 

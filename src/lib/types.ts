@@ -27,6 +27,7 @@ export interface TicketOffer {
   id: string;
   festival_id: string;
   provider: Provider;
+  // PostgREST serialiseert numeric als JSON-getal, dus number (geen string-parsing nodig).
   price_from: number | null;
   currency: string;
   url: string;
@@ -36,6 +37,13 @@ export interface TicketOffer {
 }
 
 export type FestivalWithOffers = Festival & { ticket_offers: TicketOffer[] };
+
+export interface Click {
+  id: number;
+  offer_id: string;
+  clicked_at: string;
+  referer: string | null;
+}
 
 export interface Article {
   id: string;

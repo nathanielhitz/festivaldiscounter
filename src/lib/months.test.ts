@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { monthSlug, parseMonthSlug, monthLabel, monthsWithFestivals } from "@/lib/months";
+import { monthSlug, parseMonthSlug, monthLabel, monthsWithFestivals, todayAmsterdam } from "@/lib/months";
 
 describe("monthSlug", () => {
   it("maakt een slug van een ISO-datum", () => {
@@ -34,6 +34,24 @@ describe("parseMonthSlug", () => {
 describe("monthLabel", () => {
   it("maakt een leesbaar label", () => {
     expect(monthLabel("juli-2026")).toBe("juli 2026");
+  });
+});
+
+describe("todayAmsterdam", () => {
+  it("geeft een ISO-datum (YYYY-MM-DD)", () => {
+    expect(todayAmsterdam()).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+  it("komt overeen met een onafhankelijke berekening in Europe/Amsterdam", () => {
+    // Onafhankelijke tweede berekening: losse datumdelen via formatToParts.
+    const parts = new Intl.DateTimeFormat("nl-NL", {
+      timeZone: "Europe/Amsterdam",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
+    const get = (type: string) => parts.find((p) => p.type === type)?.value;
+    const expected = `${get("year")}-${get("month")}-${get("day")}`;
+    expect(todayAmsterdam()).toBe(expected);
   });
 });
 

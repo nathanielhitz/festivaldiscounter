@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { todayAmsterdam } from "./months";
 import type { Article, FestivalWithOffers, TicketOffer } from "./types";
 
 const FESTIVAL_SELECT = "*, ticket_offers(*)";
@@ -14,7 +15,7 @@ export async function getPublishedFestivals(): Promise<FestivalWithOffers[]> {
 }
 
 export async function getUpcomingFestivals(limit?: number): Promise<FestivalWithOffers[]> {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayAmsterdam();
   let query = supabase
     .from("festivals")
     .select(FESTIVAL_SELECT)

@@ -1,0 +1,90 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import FestivalCard from "@/components/FestivalCard";
+import { getUpcomingFestivals } from "@/lib/queries";
+import { monthLabel, monthSlug, monthsWithFestivals } from "@/lib/months";
+
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "Alle festivals in Nederland (2026)",
+  description:
+    "Overzicht van alle grote Nederlandse festivals met data, locaties en de laagste ticketprijzen. Filter op maand, genre of provincie.",
+};
+
+interface Search { q?: string; maand?: string; genre?: string; provincie?: string }
+
+export default async function FestivalsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Search>;
+}) {
+  const { q, maand, genre, provincie } = await searchParams;
+  const alle = await getUpcomingFestivals();
+
+  const term = q?.toLowerCase().trim();
+  const festivals = alle.filter((f) => {
+    if (term && ![f.name, f.city, ...f.genres].some((v) => v.toLowerCase().includes(term))) return false;
+    if (maand && monthSlug(f.start_date) !== maand) return false;
+    if (genre && !f.genres.includes(genre)) return false;
+    if (provincie && f.province !== provincie) return false;
+    return true;
+  });
+
+  const maanden = monthsWithFestivals(alle);
+  const genres = [...new Set(alle.flatMap((f) => f.genres))].sort();
+  const provincies = [...new Set(alle.map((f) => f.province))].sort();
+
+  const filterLink = (patch: Partial<Search>) => {
+    const params = new URLSearchParams();
+    const merged = { q, maand, genre, provincie, ...patch };
+    for (const [k, v] of Object.entries(merged)) if (v) params.set(k, v);
+    const qs = params.toString();
+    return qs ? `/festivals?${qs}` : "/festivals";
+  };
+
+  return (
+    <main className="mx-auto max-w-6xl px-5 py-12">
+      <h1 className="display text-4xl">Alle festivals</h1>
+      <p className="mt-2 text-mut">
+        {festivals.length} {festivals.length === 1 ? "festival" : "festivals"} gevonden
+        {term ? ` voor “${q}”` : ""}.
+      </p>
+
+      <div className="mt-6 flex flex-col gap-3 text-sm">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Maand</span>
+          <Link href={filterLink({ maand: undefined })} className={!maand ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
+          {maanden.map((m) => (
+            <Link key={m} href={filterLink({ maand: m })} className={maand === m ? "font-bold text-accent" : "text-mut hover:text-ink"}>
+              {monthLabel(m)}
+            </Link>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Genre</span>
+          <Link href={filterLink({ genre: undefined })} className={!genre ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
+          {genres.map((g) => (
+            <Link key={g} href={filterLink({ genre: g })} className={genre === g ? "font-bold text-accent" : "text-mut hover:text-ink"}>{g}</Link>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Provincie</span>
+          <Link href={filterLink({ provincie: undefined })} className={!provincie ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
+          {provincies.map((p) => (
+            <Link key={p} href={filterLink({ provincie: p })} className={provincie === p ? "font-bold text-accent" : "text-mut hover:text-ink"}>{p}</Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {festivals.map((f) => <FestivalCard key={f.id} festival={f} />)}
+      </div>
+      {festivals.length === 0 && (
+        <p className="mt-8 text-mut">
+          Geen festivals gevonden. <Link href="/festivals" className="text-accent underline">Wis de filters</Link>.
+        </p>
+      )}
+    </main>
+  );
+}

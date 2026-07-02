@@ -1,10 +1,8 @@
+import { MAANDEN } from "./months";
 import type { Availability, Provider } from "./types";
 
-const MAANDEN = [
-  "januari", "februari", "maart", "april", "mei", "juni",
-  "juli", "augustus", "september", "oktober", "november", "december",
-];
-
+// Alleen voor plain date-strings (start_date/end_date): UTC-componenten zijn
+// daar correct, want er is geen tijdstip of tijdzone in het spel.
 function parts(iso: string) {
   const d = new Date(iso.length === 10 ? `${iso}T00:00:00Z` : iso);
   return { day: d.getUTCDate(), month: d.getUTCMonth(), year: d.getUTCFullYear() };
@@ -20,17 +18,24 @@ export function formatDateRange(start: string, end: string): string {
 }
 
 export function formatPrice(amount: number): string {
-  const heleEuros = Math.round(amount * 100) % 100 === 0;
-  const num = amount.toLocaleString("nl-NL", {
+  const rounded = Math.round(amount * 100) / 100;
+  const heleEuros = Number.isInteger(rounded);
+  const num = rounded.toLocaleString("nl-NL", {
     minimumFractionDigits: heleEuros ? 0 : 2,
     maximumFractionDigits: heleEuros ? 0 : 2,
   });
   return `€ ${num}`;
 }
 
+// last_checked_at is een timestamptz; formatteer in Nederlandse tijdzone,
+// anders klopt de datum niet rond middernacht.
 export function formatCheckedDate(iso: string): string {
-  const p = parts(iso);
-  return `${p.day} ${MAANDEN[p.month]} ${p.year}`;
+  return new Intl.DateTimeFormat("nl-NL", {
+    timeZone: "Europe/Amsterdam",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(iso));
 }
 
 export function minPrice(

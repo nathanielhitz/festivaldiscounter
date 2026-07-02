@@ -1,4 +1,4 @@
-const MAANDEN = [
+export const MAANDEN = [
   "januari", "februari", "maart", "april", "mei", "juni",
   "juli", "augustus", "september", "oktober", "november", "december",
 ];
@@ -13,7 +13,9 @@ export function parseMonthSlug(slug: string): { year: number; month: number } | 
   if (!m) return null;
   const month = MAANDEN.indexOf(m[1]);
   if (month === -1) return null;
-  return { year: Number(m[2]), month };
+  const year = Number(m[2]);
+  if (year < 2020 || year > 2100) return null;
+  return { year, month };
 }
 
 export function monthLabel(slug: string): string | null {

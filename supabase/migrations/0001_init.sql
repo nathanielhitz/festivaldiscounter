@@ -22,7 +22,8 @@ create table festivals (
   status festival_status not null default 'announced',
   published boolean not null default false,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  constraint festivals_dates_check check (end_date >= start_date)
 );
 
 create table ticket_offers (
@@ -34,7 +35,9 @@ create table ticket_offers (
   url text not null,
   affiliate_url text,
   availability ticket_availability not null default 'unknown',
-  last_checked_at timestamptz not null default now()
+  last_checked_at timestamptz not null default now(),
+  constraint ticket_offers_festival_provider_key unique (festival_id, provider),
+  constraint ticket_offers_price_nonneg_check check (price_from is null or price_from >= 0)
 );
 
 create table articles (
@@ -61,7 +64,8 @@ create index ticket_offers_festival_idx on ticket_offers (festival_id);
 create index clicks_offer_idx on clicks (offer_id);
 
 create or replace function set_updated_at() returns trigger as $$
-begin new.updated_at = now(); return new; end $$ language plpgsql;
+begin new.updated_at = now(); return new; end $$ language plpgsql
+set search_path = '';
 
 create trigger festivals_updated_at
   before update on festivals

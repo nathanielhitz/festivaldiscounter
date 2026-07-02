@@ -1,1 +1,49 @@
 @import "tailwindcss";
+
+/* Merkletter — voeg built-titling.woff2 toe zodra de licentie geregeld is.
+   Ontbreekt het bestand, dan valt de stack terug op Avenir Next Condensed. */
+@font-face {
+  font-family: "Built Titling";
+  src: url("/fonts/built-titling.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@theme {
+  --color-ground: #061410;
+  --color-panel: #0b211a;
+  --color-panel2: #0e2a21;
+  --color-line: #1b3a30;
+  --color-ink: #eaf4ef;
+  --color-mut: #8fa99d;
+  --color-accent: #60dbcc;
+  --color-accent-deep: #2e8f82;
+  --color-warn: #e8c567;
+  --font-display: "Built Titling", "Avenir Next Condensed", "Arial Narrow", sans-serif;
+  --font-body: "Avenir Next", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+}
+
+/* Leeskolom voor gidsartikelen (max ~65 tekens, ruimere interlinie) */
+.prose-dark {
+  max-width: 65ch;
+  line-height: 1.75;
+}
+.prose-dark h2 { font-size: 1.5rem; margin: 1.6em 0 0.6em; font-weight: 700; }
+.prose-dark h3 { font-size: 1.2rem; margin: 1.4em 0 0.5em; font-weight: 700; }
+.prose-dark p, .prose-dark ul, .prose-dark ol { margin: 0 0 1em; color: var(--color-ink); }
+.prose-dark a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 3px; }
+.prose-dark li { margin-bottom: 0.4em; }

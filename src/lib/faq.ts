@@ -24,7 +24,7 @@ function statusItem(festival: Festival): FaqItem | null {
     case "announced":
       return {
         question: `Is ${festival.name} uitverkocht?`,
-        answer: `Nee — de kaartverkoop voor ${festival.name} is nog niet gestart.`,
+        answer: `Nee — de officiële kaartverkoop voor ${festival.name} is nog niet gestart.`,
       };
     case "tickets_live":
       return {
@@ -50,7 +50,10 @@ export function buildFaq(festival: Festival, offers: TicketOffer[]): FaqItem[] {
     }.`,
   });
 
-  const goedkoopste = cheapestOffer(offers);
+  // Geen prijsvraag voor afgelaste of voorbije festivals: een "vanaf-prijs"
+  // is daar misleidend, ook als er nog geprijsde offers in de data staan.
+  const prijsRelevant = festival.status !== "cancelled" && festival.status !== "past";
+  const goedkoopste = prijsRelevant ? cheapestOffer(offers) : null;
   if (goedkoopste) {
     items.push({
       question: `Wat kost een ticket voor ${festival.name}?`,

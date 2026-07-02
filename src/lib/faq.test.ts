@@ -47,26 +47,30 @@ describe("buildFaq", () => {
     expect(faq.at(-1)!.answer).toContain("officieel uitverkocht");
   });
 
-  it("vervangt de uitverkocht-vraag bij status cancelled", () => {
+  it("vervangt de uitverkocht-vraag bij status cancelled en onderdrukt de prijsvraag", () => {
     const faq = buildFaq({ ...festival, status: "cancelled" }, offers);
     const vragen = faq.map((f) => f.question);
     expect(vragen).not.toContain("Is Lowlands uitverkocht?");
+    expect(vragen).not.toContain("Wat kost een ticket voor Lowlands?");
     expect(faq.at(-1)!.question).toBe("Gaat Lowlands nog door?");
     expect(faq.at(-1)!.answer).toContain("afgelast");
     expect(faq.at(-1)!.answer).toContain("terugbetaling");
   });
 
-  it("laat de uitverkocht-vraag helemaal weg bij status past", () => {
+  it("laat de uitverkocht-vraag en prijsvraag helemaal weg bij status past", () => {
     const faq = buildFaq({ ...festival, status: "past" }, offers);
     const vragen = faq.map((f) => f.question);
     expect(vragen).not.toContain("Is Lowlands uitverkocht?");
     expect(vragen).not.toContain("Gaat Lowlands nog door?");
+    expect(vragen).not.toContain("Wat kost een ticket voor Lowlands?");
   });
 
-  it("meldt bij status announced dat de verkoop nog niet is gestart", () => {
+  it("meldt bij status announced dat de officiële verkoop nog niet is gestart", () => {
     const faq = buildFaq({ ...festival, status: "announced" }, offers);
     expect(faq.at(-1)!.question).toBe("Is Lowlands uitverkocht?");
-    expect(faq.at(-1)!.answer).toBe("Nee — de kaartverkoop voor Lowlands is nog niet gestart.");
+    expect(faq.at(-1)!.answer).toBe(
+      "Nee — de officiële kaartverkoop voor Lowlands is nog niet gestart."
+    );
     expect(faq.at(-1)!.answer).not.toContain("aanbieders");
   });
 });

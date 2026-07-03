@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import FestivalCard from "@/components/FestivalCard";
+import FilterDropdown from "@/components/FilterDropdown";
+import DetailsOutsideCloser from "@/components/DetailsOutsideCloser";
 import { getUpcomingFestivals } from "@/lib/queries";
 import { monthLabel, monthSlug, monthsWithFestivals } from "@/lib/months";
+import { buildFilterHref, type FestivalFilterState } from "@/lib/filter-link";
 
 // Deze route is dynamisch (searchParams is een Dynamic API in Next 15), dus
 // route-level ISR via `export const revalidate` werkt hier niet. In plaats
@@ -23,7 +26,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/festivals" },
 };
 
-interface Search { q?: string; maand?: string; genre?: string; provincie?: string }
+type Search = FestivalFilterState;
 
 export default async function FestivalsPage({
   searchParams,
@@ -46,13 +49,8 @@ export default async function FestivalsPage({
   const genres = [...new Set(alle.flatMap((f) => f.genres))].sort();
   const provincies = [...new Set(alle.map((f) => f.province))].sort();
 
-  const filterLink = (patch: Partial<Search>) => {
-    const params = new URLSearchParams();
-    const merged = { q, maand, genre, provincie, ...patch };
-    for (const [k, v] of Object.entries(merged)) if (v) params.set(k, v);
-    const qs = params.toString();
-    return qs ? `/festivals?${qs}` : "/festivals";
-  };
+  const current: Search = { q, maand, genre, provincie };
+  const filterLink = (patch: Partial<Search>) => buildFilterHref(current, patch);
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-12">
@@ -64,9 +62,42 @@ export default async function FestivalsPage({
         </p>
       )}
 
-      <div className="mt-6 flex flex-col gap-3 text-sm">
+      {/* Mobiel: compacte dropdowns met native accordion-gedrag. */}
+      <div className="mt-6 flex flex-col gap-2 lg:hidden">
+        <FilterDropdown
+          key={`maand-${maand ?? "alle"}`}
+          groupName="festival-filters"
+          label="Maand"
+          options={maanden.map((m) => ({ value: m, label: monthLabel(m) ?? m }))}
+          selectedValue={maand}
+          selectedLabel={maand ? monthLabel(maand) ?? maand : "Alle"}
+          buildHref={(v) => filterLink({ maand: v })}
+        />
+        <FilterDropdown
+          key={`genre-${genre ?? "alle"}`}
+          groupName="festival-filters"
+          label="Genre"
+          options={genres.map((g) => ({ value: g, label: g }))}
+          selectedValue={genre}
+          selectedLabel={genre ?? "Alle"}
+          buildHref={(v) => filterLink({ genre: v })}
+        />
+        <FilterDropdown
+          key={`provincie-${provincie ?? "alle"}`}
+          groupName="festival-filters"
+          label="Provincie"
+          options={provincies.map((p) => ({ value: p, label: p }))}
+          selectedValue={provincie}
+          selectedLabel={provincie ?? "Alle"}
+          buildHref={(v) => filterLink({ provincie: v })}
+        />
+        <DetailsOutsideCloser groupName="festival-filters" />
+      </div>
+
+      {/* Desktop/tablet: ongewijzigde pill-rijen. */}
+      <div className="mt-6 hidden flex-col gap-3 text-sm lg:flex">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-full text-xs font-bold uppercase tracking-wider text-mut sm:w-20 sm:shrink-0">Maand</span>
+          <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Maand</span>
           <Link
             href={filterLink({ maand: undefined })}
             aria-current={!maand ? "true" : undefined}
@@ -90,7 +121,7 @@ export default async function FestivalsPage({
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-full text-xs font-bold uppercase tracking-wider text-mut sm:w-20 sm:shrink-0">Genre</span>
+          <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Genre</span>
           <Link
             href={filterLink({ genre: undefined })}
             aria-current={!genre ? "true" : undefined}
@@ -114,7 +145,7 @@ export default async function FestivalsPage({
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-full text-xs font-bold uppercase tracking-wider text-mut sm:w-20 sm:shrink-0">Provincie</span>
+          <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Provincie</span>
           <Link
             href={filterLink({ provincie: undefined })}
             aria-current={!provincie ? "true" : undefined}

@@ -64,26 +64,75 @@ export default async function FestivalsPage({
 
       <div className="mt-6 flex flex-col gap-3 text-sm">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Maand</span>
-          <Link href={filterLink({ maand: undefined })} aria-current={!maand ? "true" : undefined} className={!maand ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
+          <span className="w-full text-xs font-bold uppercase tracking-wider text-mut sm:w-20 sm:shrink-0">Maand</span>
+          <Link
+            href={filterLink({ maand: undefined })}
+            aria-current={!maand ? "true" : undefined}
+            className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold ${
+              !maand ? "border-accent bg-accent/10 text-accent" : "border-line text-mut hover:text-ink"
+            }`}
+          >
+            Alle
+          </Link>
           {maanden.map((m) => (
-            <Link key={m} href={filterLink({ maand: m })} aria-current={maand === m ? "true" : undefined} className={maand === m ? "font-bold text-accent" : "text-mut hover:text-ink"}>
+            <Link
+              key={m}
+              href={filterLink({ maand: m })}
+              aria-current={maand === m ? "true" : undefined}
+              className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold ${
+                maand === m ? "border-accent bg-accent/10 text-accent" : "border-line text-mut hover:text-ink"
+              }`}
+            >
               {monthLabel(m)}
             </Link>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Genre</span>
-          <Link href={filterLink({ genre: undefined })} aria-current={!genre ? "true" : undefined} className={!genre ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
+          <span className="w-full text-xs font-bold uppercase tracking-wider text-mut sm:w-20 sm:shrink-0">Genre</span>
+          <Link
+            href={filterLink({ genre: undefined })}
+            aria-current={!genre ? "true" : undefined}
+            className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold ${
+              !genre ? "border-accent bg-accent/10 text-accent" : "border-line text-mut hover:text-ink"
+            }`}
+          >
+            Alle
+          </Link>
           {genres.map((g) => (
-            <Link key={g} href={filterLink({ genre: g })} aria-current={genre === g ? "true" : undefined} className={genre === g ? "font-bold text-accent" : "text-mut hover:text-ink"}>{g}</Link>
+            <Link
+              key={g}
+              href={filterLink({ genre: g })}
+              aria-current={genre === g ? "true" : undefined}
+              className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold ${
+                genre === g ? "border-accent bg-accent/10 text-accent" : "border-line text-mut hover:text-ink"
+              }`}
+            >
+              {g}
+            </Link>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-20 shrink-0 text-xs font-bold uppercase tracking-wider text-mut">Provincie</span>
-          <Link href={filterLink({ provincie: undefined })} aria-current={!provincie ? "true" : undefined} className={!provincie ? "font-bold text-accent" : "text-mut hover:text-ink"}>Alle</Link>
+          <span className="w-full text-xs font-bold uppercase tracking-wider text-mut sm:w-20 sm:shrink-0">Provincie</span>
+          <Link
+            href={filterLink({ provincie: undefined })}
+            aria-current={!provincie ? "true" : undefined}
+            className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold ${
+              !provincie ? "border-accent bg-accent/10 text-accent" : "border-line text-mut hover:text-ink"
+            }`}
+          >
+            Alle
+          </Link>
           {provincies.map((p) => (
-            <Link key={p} href={filterLink({ provincie: p })} aria-current={provincie === p ? "true" : undefined} className={provincie === p ? "font-bold text-accent" : "text-mut hover:text-ink"}>{p}</Link>
+            <Link
+              key={p}
+              href={filterLink({ provincie: p })}
+              aria-current={provincie === p ? "true" : undefined}
+              className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold ${
+                provincie === p ? "border-accent bg-accent/10 text-accent" : "border-line text-mut hover:text-ink"
+              }`}
+            >
+              {p}
+            </Link>
           ))}
         </div>
       </div>

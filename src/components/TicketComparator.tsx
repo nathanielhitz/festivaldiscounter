@@ -49,7 +49,7 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
           return (
             <li
               key={o.id}
-              className={`relative grid grid-cols-2 items-center gap-3 rounded border px-4 py-3.5 sm:grid-cols-[1.4fr_1fr_1fr_auto] ${
+              className={`relative grid grid-cols-2 items-center gap-3 rounded border px-4 py-3.5 sm:grid-cols-[minmax(6rem,1.6fr)_auto_auto_auto] ${
                 isLaagste ? "border-accent bg-accent/5" : "border-line"
               }`}
             >
@@ -60,7 +60,7 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
               )}
               <div>
                 <p className="font-bold">{PROVIDER_LABELS[o.provider]}</p>
-                <p className="text-xs text-mut">{PROVIDER_SUB[o.provider]}</p>
+                <p className="text-xs text-mut sm:max-w-[16ch]">{PROVIDER_SUB[o.provider]}</p>
               </div>
               <p
                 className={`text-xs font-semibold uppercase tracking-wide ${
@@ -70,7 +70,7 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
               >
                 {AVAILABILITY_LABELS[o.availability]}
               </p>
-              <p className="text-lg font-bold tabular-nums">
+              <p className="whitespace-nowrap text-lg font-bold tabular-nums">
                 {o.price_from != null ? (
                   <>
                     {formatPrice(Number(o.price_from))}
@@ -84,7 +84,7 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
                 href={`/uit/${o.id}`}
                 rel="sponsored nofollow"
                 aria-label={`Bekijk tickets bij ${PROVIDER_LABELS[o.provider]}`}
-                className="rounded-sm bg-accent px-5 py-2.5 text-center text-sm font-bold text-ground hover:bg-accent-deep"
+                className="whitespace-nowrap rounded-sm bg-accent px-4 py-2.5 text-center text-sm font-bold text-ground hover:bg-accent-deep"
               >
                 Bekijk tickets
               </a>

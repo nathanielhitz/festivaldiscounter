@@ -2,6 +2,20 @@ import Link from "next/link";
 import type { FestivalWithOffers } from "@/lib/types";
 import { formatDateRange, formatPrice, minPrice } from "@/lib/format";
 
+const GRADIENTS = [
+  "bg-gradient-to-br from-accent-deep to-accent",
+  "bg-gradient-to-tr from-[#0e4a3c] via-accent-deep to-accent",
+  "bg-gradient-to-b from-accent via-[#37b3a0] to-accent-deep",
+  "bg-gradient-to-br from-[#123a4a] via-[#1d6e66] to-accent",
+  "bg-gradient-to-tl from-[#0b2f28] via-accent-deep to-[#8fe8da]",
+  "bg-gradient-to-r from-[#0e4a3c] to-[#4fc5b4]",
+];
+
+function gradientFor(slug: string): string {
+  const hash = [...slug].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  return GRADIENTS[hash % GRADIENTS.length];
+}
+
 export default function FestivalCard({ festival }: { festival: FestivalWithOffers }) {
   const prijs = minPrice(festival.ticket_offers);
   return (
@@ -9,7 +23,7 @@ export default function FestivalCard({ festival }: { festival: FestivalWithOffer
       href={`/festivals/${festival.slug}`}
       className="group block overflow-hidden rounded border border-line bg-panel transition hover:-translate-y-0.5 hover:border-accent-deep"
     >
-      <div className="relative h-36 bg-gradient-to-br from-accent-deep to-accent">
+      <div className={`relative h-36 ${gradientFor(festival.slug)}`}>
         {festival.image_url && (
           // eslint-disable-next-line @next/next/no-img-element
           <img

@@ -15,7 +15,7 @@ export default async function Home() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(720px 340px at 82% -10%, rgba(96,219,204,.16), transparent 65%)",
+              "radial-gradient(900px 420px at 82% -10%, rgba(96,219,204,.24), transparent 65%), radial-gradient(600px 300px at 8% 115%, rgba(46,143,130,.12), transparent 60%)",
           }}
         />
         <div className="relative mx-auto max-w-6xl px-5 py-20">
@@ -30,13 +30,13 @@ export default async function Home() {
           </h1>
           <p className="mt-4 max-w-xl text-mut">
             Vergelijk ticketprijzen van officiële verkoop én doorverkoop voor alle grote
-            Nederlandse festivals — op één plek.
+            Nederlandse festivals, op één plek.
           </p>
           <form action="/festivals" className="mt-8 flex max-w-xl gap-1.5 rounded border border-line bg-panel p-1.5">
             <input
               type="search"
               name="q"
-              placeholder="Zoek een festival, stad of genre…"
+              placeholder="Zoek een festival…"
               aria-label="Zoek een festival"
               className="min-w-0 flex-1 rounded-sm bg-transparent px-3.5 py-3 text-ink placeholder:text-mut focus:outline-2 focus:outline-offset-2 focus:outline-accent"
             />
@@ -64,7 +64,7 @@ export default async function Home() {
         </Link>
         <Link href="/last-minute-festivals" className="rounded border border-line bg-panel p-6 transition hover:border-accent-deep">
           <h3 className="display text-2xl">Last-minute festivals</h3>
-          <p className="mt-1 text-sm text-mut">Festivals die binnen 30 dagen starten — vaak met dalende doorverkoopprijzen.</p>
+          <p className="mt-1 text-sm text-mut">Festivals die binnen 30 dagen starten, vaak met dalende doorverkoopprijzen.</p>
         </Link>
       </section>
     </main>

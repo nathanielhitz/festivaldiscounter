@@ -24,7 +24,7 @@ function statusItem(festival: Festival): FaqItem | null {
     case "announced":
       return {
         question: `Is ${festival.name} uitverkocht?`,
-        answer: `Nee — de officiële kaartverkoop voor ${festival.name} is nog niet gestart.`,
+        answer: `Nee, de officiële kaartverkoop voor ${festival.name} is nog niet gestart.`,
       };
     case "tickets_live":
       return {

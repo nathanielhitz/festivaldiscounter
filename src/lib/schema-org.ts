@@ -5,7 +5,7 @@ const AVAILABILITY_SCHEMA: Partial<Record<Availability, string>> = {
   available: "https://schema.org/InStock",
   limited: "https://schema.org/LimitedAvailability",
   sold_out: "https://schema.org/SoldOut",
-  // unknown: bewust geen mapping — het veld wordt dan weggelaten.
+  // unknown: bewust geen mapping; het veld wordt dan weggelaten.
 };
 
 export function buildEventSchema(festival: Festival, offers: TicketOffer[], base: string) {

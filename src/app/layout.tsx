@@ -8,7 +8,7 @@ import { SITE_URL } from "@/lib/site";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "FestivalDiscounter.nl — Festivaltickets vergelijken",
+    default: "FestivalDiscounter.nl · Festivaltickets vergelijken",
     template: "%s · FestivalDiscounter.nl",
   },
   description:

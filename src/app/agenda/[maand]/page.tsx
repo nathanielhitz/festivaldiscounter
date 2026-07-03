@@ -20,7 +20,7 @@ export async function generateMetadata({
   const label = monthLabel(maand);
   if (!label) return {};
   return {
-    title: `Festivals in ${label} — data en ticketprijzen`,
+    title: `Festivals in ${label}: data en ticketprijzen`,
     description: `Welke festivals zijn er in ${label}? Alle Nederlandse festivals in ${label} met data, locaties en de laagste ticketprijzen.`,
   };
 }

@@ -1,13 +1,6 @@
 @import "tailwindcss";
 
-/* Merkletter — voeg built-titling.woff2 toe zodra de licentie geregeld is.
-   Ontbreekt het bestand, dan valt de stack terug op Avenir Next Condensed. */
-@font-face {
-  font-family: "Built Titling";
-  src: url("/fonts/built-titling.woff2") format("woff2");
-  font-weight: 400 700;
-  font-display: swap;
-}
+/* Built Titling (merkfont) wordt hier als @font-face toegevoegd zodra de licentie rond is; zie docs/lancering-checklist.md. Tot die tijd rendert de fallback-stack. */
 
 @theme {
   --color-ground: #061410;

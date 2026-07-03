@@ -12,7 +12,7 @@ export default function ContactPage() {
       <div className="prose-dark mt-6">
         <p>
           Vragen, een foutje gespot in een prijs of festivalinformatie, of samenwerken? Mail ons op{" "}
-          <a href="mailto:info@festivaldiscounter.nl">info@festivaldiscounter.nl</a> — we reageren
+          <a href="mailto:info@festivaldiscounter.nl">info@festivaldiscounter.nl</a>. We reageren
           doorgaans binnen twee werkdagen.
         </p>
         <p>

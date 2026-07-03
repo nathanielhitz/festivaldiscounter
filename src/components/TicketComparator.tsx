@@ -34,7 +34,7 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
 
       {festival.status === "sold_out" && (
         <p className="mb-4 rounded-sm border border-warn/40 bg-warn/10 px-3 py-2 text-sm text-warn">
-          Dit festival is officieel uitverkocht — via doorverkoop komen vaak nog tickets beschikbaar.
+          Dit festival is officieel uitverkocht; via doorverkoop komen vaak nog tickets beschikbaar.
         </p>
       )}
 
@@ -93,9 +93,11 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
         })}
       </ul>
 
-      <p className="mt-4 text-xs text-mut">
-        Prijzen kunnen afwijken op de site van de aanbieder. Links kunnen affiliate-links zijn — jij betaalt nooit meer.
-      </p>
+      {offers.length > 0 && (
+        <p className="mt-4 text-xs text-mut">
+          Prijzen kunnen afwijken op de site van de aanbieder. Links kunnen affiliate-links zijn; jij betaalt nooit meer.
+        </p>
+      )}
     </section>
   );
 }

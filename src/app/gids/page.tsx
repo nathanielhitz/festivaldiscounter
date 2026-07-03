@@ -6,7 +6,7 @@ import { formatCheckedDate } from "@/lib/format";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Festivalgids — koopgidsen en tips",
+  title: "Festivalgids: koopgidsen en tips",
   description:
     "Praktische gidsen over festivaltickets: veilig doorverkoop kopen, prijzen vergelijken en slim je festivalweekend plannen.",
 };

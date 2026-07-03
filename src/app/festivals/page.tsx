@@ -7,7 +7,7 @@ import { monthLabel, monthSlug, monthsWithFestivals } from "@/lib/months";
 
 // Deze route is dynamisch (searchParams is een Dynamic API in Next 15), dus
 // route-level ISR via `export const revalidate` werkt hier niet. In plaats
-// daarvan cachen we de data-fetch zelf in de Data Cache (max 1 uur oud —
+// daarvan cachen we de data-fetch zelf in de Data Cache (max 1 uur oud,
 // dezelfde versheid als de ISR-pagina's). Let op: todayAmsterdam() draait
 // bínnen getUpcomingFestivals, dus "vandaag" bevriest maximaal een uur mee.
 const getCachedUpcomingFestivals = unstable_cache(
@@ -57,10 +57,12 @@ export default async function FestivalsPage({
   return (
     <main className="mx-auto max-w-6xl px-5 py-12">
       <h1 className="display text-4xl">Alle festivals</h1>
-      <p className="mt-2 text-mut">
-        {festivals.length} {festivals.length === 1 ? "festival" : "festivals"} gevonden
-        {term ? ` voor “${q}”` : ""}.
-      </p>
+      {festivals.length > 0 && (
+        <p className="mt-2 text-mut">
+          {festivals.length} {festivals.length === 1 ? "festival" : "festivals"} gevonden
+          {term ? ` voor “${q}”` : ""}.
+        </p>
+      )}
 
       <div className="mt-6 flex flex-col gap-3 text-sm">
         <div className="flex flex-wrap items-center gap-2">
@@ -137,13 +139,15 @@ export default async function FestivalsPage({
         </div>
       </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {festivals.map((f) => <FestivalCard key={f.id} festival={f} />)}
-      </div>
-      {festivals.length === 0 && (
+      {festivals.length === 0 ? (
         <p className="mt-8 text-mut">
-          Geen festivals gevonden. <Link href="/festivals" className="text-accent underline">Wis de filters</Link>.
+          Geen festivals gevonden{term ? ` voor “${q}”` : ""}.{" "}
+          <Link href="/festivals" className="text-accent underline">Wis de filters</Link>.
         </p>
+      ) : (
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {festivals.map((f) => <FestivalCard key={f.id} festival={f} />)}
+        </div>
       )}
     </main>
   );

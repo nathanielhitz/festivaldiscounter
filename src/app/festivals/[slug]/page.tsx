@@ -28,7 +28,7 @@ export async function generateMetadata({
   const jaar = festival.start_date.slice(0, 4);
   const prijs = minPrice(festival.ticket_offers);
   return {
-    title: `${festival.name} ${jaar} tickets — prijzen vergelijken`,
+    title: `${festival.name} ${jaar} tickets: prijzen vergelijken`,
     description: `${festival.name} ${jaar} in ${festival.city}: ${formatDateRange(
       festival.start_date, festival.end_date
     )}. Vergelijk ticketprijzen${prijs != null ? ` vanaf ${formatPrice(prijs)}` : ""} van officiële verkoop en doorverkoop.`,
@@ -61,7 +61,7 @@ export default async function FestivalPage({
       ])} />
 
       <nav className="text-sm text-mut" aria-label="Kruimelpad">
-        <Link href="/festivals" className="hover:text-ink">Festivals</Link>
+        <Link href="/festivals" className="inline-block py-2 hover:text-ink">Festivals</Link>
         <span className="mx-2">/</span>
         <span aria-current="page">{festival.name}</span>
       </nav>

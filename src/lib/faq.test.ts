@@ -69,7 +69,7 @@ describe("buildFaq", () => {
     const faq = buildFaq({ ...festival, status: "announced" }, offers);
     expect(faq.at(-1)!.question).toBe("Is Lowlands uitverkocht?");
     expect(faq.at(-1)!.answer).toBe(
-      "Nee — de officiële kaartverkoop voor Lowlands is nog niet gestart."
+      "Nee, de officiële kaartverkoop voor Lowlands is nog niet gestart."
     );
     expect(faq.at(-1)!.answer).not.toContain("aanbieders");
   });

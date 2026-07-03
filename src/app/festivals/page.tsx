@@ -62,7 +62,12 @@ export default async function FestivalsPage({
         </p>
       )}
 
-      {/* Mobiel: compacte dropdowns met native accordion-gedrag. */}
+      {/* Mobiel: compacte dropdowns met native accordion-gedrag. De key per
+          dropdown is aan zijn eigen geselecteerde waarde gekoppeld en forceert
+          zo een remount (dus een dichte <details>) zodra die waarde wijzigt —
+          nodig omdat React het open-attribuut van <details> niet beheert en
+          de DOM-node anders na een Link-navigatie open kan blijven staan.
+          Houd deze koppeling in stand als je selectedValue ooit anders bepaalt. */}
       <div className="mt-6 flex flex-col gap-2 lg:hidden">
         <FilterDropdown
           key={`maand-${maand ?? "alle"}`}

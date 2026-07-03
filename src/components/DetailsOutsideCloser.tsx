@@ -2,6 +2,11 @@
 
 import { useEffect } from "react";
 
+// Vertrouwt op de exclusieve <details name> group-semantiek (Chrome 120+,
+// Safari 17.4+, Firefox 125+). Op oudere browsers regelt dit component nog
+// wel "sluit bij tap buiten de groep", maar niet de accordion-exclusiviteit
+// zelf; twee panelen kunnen daar dan tegelijk open blijven staan. Acceptabel
+// gezien de doelgroep, maar bewust — niet per ongeluk aanpassen.
 export default function DetailsOutsideCloser({ groupName }: { groupName: string }) {
   useEffect(() => {
     function handlePointerDown(e: PointerEvent) {

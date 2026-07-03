@@ -2,17 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-
-function safeSiteUrl(): URL {
-  try {
-    return new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000");
-  } catch {
-    return new URL("http://localhost:3000");
-  }
-}
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  metadataBase: safeSiteUrl(),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "FestivalDiscounter.nl — Festivaltickets vergelijken",
     template: "%s · FestivalDiscounter.nl",

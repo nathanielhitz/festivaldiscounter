@@ -8,10 +8,9 @@ import { buildFaq } from "@/lib/faq";
 import { formatDateRange, formatPrice, minPrice } from "@/lib/format";
 import { getFestivalBySlug, getPublishedFestivals, getUpcomingFestivals } from "@/lib/queries";
 import { buildBreadcrumbSchema, buildEventSchema, buildFaqSchema } from "@/lib/schema-org";
+import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 3600;
-
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export async function generateStaticParams() {
   const festivals = await getPublishedFestivals();
@@ -54,9 +53,9 @@ export default async function FestivalPage({
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-12">
-      <JsonLd data={buildEventSchema(festival, festival.ticket_offers, BASE)} />
+      <JsonLd data={buildEventSchema(festival, festival.ticket_offers, SITE_URL)} />
       <JsonLd data={buildFaqSchema(faq)} />
-      <JsonLd data={buildBreadcrumbSchema(BASE, [
+      <JsonLd data={buildBreadcrumbSchema(SITE_URL, [
         { name: "Festivals", path: "/festivals" },
         { name: festival.name, path: `/festivals/${festival.slug}` },
       ])} />
@@ -64,7 +63,7 @@ export default async function FestivalPage({
       <nav className="text-sm text-mut" aria-label="Kruimelpad">
         <Link href="/festivals" className="hover:text-ink">Festivals</Link>
         <span className="mx-2">/</span>
-        <span>{festival.name}</span>
+        <span aria-current="page">{festival.name}</span>
       </nav>
 
       <header className="mt-4">
@@ -94,16 +93,16 @@ export default async function FestivalPage({
               ))}
             </dl>
           </section>
-          {festival.website_url && (
+          {festival.website_url && URL.canParse(festival.website_url) && (
             <p className="mt-8 text-sm text-mut">
               Officiële website:{" "}
-              <a href={festival.website_url} rel="noopener" className="text-accent underline">
+              <a href={festival.website_url} rel="noopener noreferrer" className="text-accent underline">
                 {new URL(festival.website_url).hostname}
               </a>
             </p>
           )}
         </div>
-        <div>
+        <div className="order-first lg:order-none">
           <TicketComparator festival={festival} />
         </div>
       </div>

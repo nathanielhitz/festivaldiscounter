@@ -1,5 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { getOfferById, logClick } from "@/lib/queries";
+import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -14,8 +15,7 @@ export async function GET(
   { params }: { params: Promise<{ offerId: string }> }
 ) {
   const { offerId } = await params;
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const home = new URL("/", base);
+  const home = new URL("/", SITE_URL);
 
   const offer = await getOfferById(offerId).catch(() => null);
   if (!offer) return redirectNoStore(home);

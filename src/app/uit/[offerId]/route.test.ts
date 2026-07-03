@@ -6,6 +6,8 @@ vi.mock("@/lib/queries", () => ({
   getOfferById: (...a: unknown[]) => getOfferById(...a),
   logClick: (...a: unknown[]) => logClick(...a),
 }));
+// SITE_URL wordt op moduleniveau bepaald; mock voor deterministische homepage-redirects.
+vi.mock("@/lib/site", () => ({ SITE_URL: "http://localhost:3000" }));
 
 import { GET } from "./route";
 
@@ -21,7 +23,6 @@ beforeEach(() => {
   vi.clearAllMocks();
   // de echte logClick is async en geeft altijd een Promise terug
   logClick.mockResolvedValue(undefined);
-  process.env.NEXT_PUBLIC_SITE_URL = "http://localhost:3000";
 });
 
 describe("GET /uit/[offerId]", () => {

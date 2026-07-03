@@ -23,6 +23,9 @@ export default function FestivalCard({ festival }: { festival: FestivalWithOffer
       href={`/festivals/${festival.slug}`}
       className="group block overflow-hidden rounded border border-line bg-panel transition hover:-translate-y-0.5 hover:border-accent-deep"
     >
+      {/* gradientFor is de merk-gradient-achtergrond: zichtbaar als placeholder terwijl de
+          afbeelding laadt, en als fallback wanneer een festival geen (werkende) image_url
+          heeft. De img ligt hier bovenop zodra hij laadt. */}
       <div className={`relative h-36 ${gradientFor(festival.slug)}`}>
         {festival.image_url && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -34,6 +37,9 @@ export default function FestivalCard({ festival }: { festival: FestivalWithOffer
             className="absolute inset-0 h-full w-full object-cover"
           />
         )}
+        {/* Leesbaarheids-overlay boven de foto, onder de chips: zorgt dat de datum-chip en
+            de uitverkocht-badge leesbaar blijven op lichte/drukke festivalfoto's. */}
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ground/55 via-transparent to-ground/25" />
         <span className="absolute left-3 top-3 rounded-sm bg-ground/85 px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest text-accent">
           {formatDateRange(festival.start_date, festival.end_date)}
         </span>

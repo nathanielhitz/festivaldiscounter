@@ -25,7 +25,7 @@ await checkPage("/", "Nooit te veel betalen");
 await checkPage("/festivals", "Lowlands");
 await checkPage("/festivals/lowlands", "Laagste prijs");
 await checkPage("/festivals/lowlands", "application/ld+json");
-await checkPage("/goedkope-festivaltickets", "Mysteryland");
+await checkPage("/goedkope-festivaltickets", "Awakenings");
 await checkPage("/gids/is-ticketswap-betrouwbaar", "SecureSwap");
 await checkPage("/sitemap.xml", "/festivals/lowlands");
 await checkRedirect(`/uit/${SEED_OFFER}`, "https://www.ticketswap.nl/");

@@ -47,7 +47,7 @@ export default function FilterDropdown({
           const value = opt.value || undefined;
           const isSelected = value === selectedValue;
           return (
-            <li key={opt.value || "alle"}>
+            <li key={opt.value === "" ? "__alle__" : opt.value}>
               <Link
                 href={buildHref(value)}
                 aria-current={isSelected ? "true" : undefined}

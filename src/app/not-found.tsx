@@ -13,7 +13,7 @@ export default function NotFound() {
           name="q"
           placeholder="Zoek een festival…"
           aria-label="Zoek een festival"
-          className="min-w-0 flex-1 bg-transparent px-3.5 py-3 text-ink placeholder:text-mut focus:outline-none"
+          className="min-w-0 flex-1 rounded-sm bg-transparent px-3.5 py-3 text-ink placeholder:text-mut focus:outline-2 focus:outline-offset-2 focus:outline-accent"
         />
         <button className="rounded-sm bg-accent px-6 font-bold text-ground">Zoek</button>
       </form>

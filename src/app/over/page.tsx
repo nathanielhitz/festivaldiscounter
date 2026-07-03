@@ -20,7 +20,8 @@ export default function OverPage() {
           Sommige links naar aanbieders zijn affiliate-links: koop je via zo&apos;n link een ticket,
           dan ontvangen wij een vergoeding van de aanbieder. Jij betaalt daardoor nooit meer — de
           prijs is exact dezelfde. Vergoedingen hebben geen invloed op de volgorde waarin we
-          aanbieders tonen: we sorteren altijd op prijs.
+          aanbieders tonen: we sorteren op prijs, en bij uitverkochte festivals tonen we
+          doorverkoopaanbieders eerst omdat je daar dan als enige terechtkunt.
         </p>
         <h2>Onafhankelijk</h2>
         <p>

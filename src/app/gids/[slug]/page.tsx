@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { marked } from "marked";
+import DOMPurify from "isomorphic-dompurify";
 import JsonLd from "@/components/JsonLd";
 import { getArticleBySlug, getPublishedArticles } from "@/lib/queries";
 
@@ -31,7 +32,7 @@ export default async function ArtikelPage({
   const artikel = await getArticleBySlug(slug);
   if (!artikel) notFound();
 
-  const html = await marked.parse(artikel.content);
+  const html = DOMPurify.sanitize(await marked.parse(artikel.content));
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-12">

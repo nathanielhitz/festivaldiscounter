@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import FestivalCard from "@/components/FestivalCard";
 import { getUpcomingFestivals } from "@/lib/queries";
+import { todayAmsterdam } from "@/lib/months";
 
 export const revalidate = 3600;
 
@@ -11,8 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default async function LastMinutePage() {
-  const grens = new Date();
-  grens.setDate(grens.getDate() + 30);
+  const grens = new Date(`${todayAmsterdam()}T00:00:00Z`);
+  grens.setUTCDate(grens.getUTCDate() + 30);
   const grensIso = grens.toISOString().slice(0, 10);
 
   const festivals = (await getUpcomingFestivals()).filter((f) => f.start_date <= grensIso);

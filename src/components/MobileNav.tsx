@@ -40,7 +40,7 @@ export default function MobileNav() {
         <nav
           id="mobiel-menu"
           aria-label="Hoofdmenu"
-          className="absolute inset-x-0 top-full border-b border-line bg-ground/95 backdrop-blur"
+          className="absolute inset-x-0 top-full border-b border-line bg-ground"
         >
           <ul>
             {NAV.map((n) => (

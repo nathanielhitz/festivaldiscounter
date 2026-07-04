@@ -1,30 +1,31 @@
 # Lancering-checklist FestivalDiscounter.nl
 
-Bijgewerkt: 2026-07-03. De site zelf is volledig gebouwd, gereviewd en live
-op Vercel (fase 1 uit `docs/superpowers/plans/2026-07-02-festivaldiscounter-fase1.md`).
-Dit bestand houdt bij wat er nog openstaat vóór/tijdens de lancering.
+Bijgewerkt: 2026-07-04. De site is volledig gebouwd, gereviewd en live op het
+eigen domein (fase 1 + fase 2a admin-dashboard). Dit bestand houdt bij wat er
+nog openstaat vóór/tijdens de lancering.
 
 ## Bij jou (eigenaar)
 
-- [ ] **DNS afronden** — `www.festivaldiscounter.nl` wijst al correct naar Vercel
-      (CNAME klopt, SSL-certificaat wordt automatisch uitgegeven). Het kale
-      domein `festivaldiscounter.nl` wijst nog naar de oude Vimexx-hosting
-      (Apache, IP 185.104.29.176) — het A-record voor host `@` moet nog naar
-      Vercel wijzen. Check in DirectAdmin of dat record daadwerkelijk is
-      opgeslagen.
+- [x] **DNS afgerond** (geverifieerd 2026-07-04) — apex `festivaldiscounter.nl`
+      én `www` wijzen naar Vercel (A-records 216.198.79.1 / 64.29.17.1; het oude
+      Vimexx-IP 185.104.29.176 is weg). Apex-http → 308 naar https, `server:
+      Vercel`. SSL actief.
 - [ ] **Affiliate-aanvragen indienen** — TradeTracker, Awin, Booking.com,
       Bol.com. Site is hiervoor gereed (werkende vergelijker + Over/Contact/
       Privacy-pagina's). *(loopt al)*
 - [ ] **Dataset doorlopen en publiceren** — `supabase/seed_full.sql` bevat 69
       nieuwe festivals + 5 gidsartikelen, allemaal met `published = false` in
       Supabase. Per rij controleren en op `true` zetten in de Supabase Table
-      Editor zodra akkoord. Twee aandachtspunten uit het onderzoek:
+      Editor zodra akkoord. **Kan nu comfortabel via de admin:** `/admin/review`
+      (bulk-publiceer/overslaan/verwijder) of per festival op `/admin/festivals`.
+      Twee aandachtspunten uit het onderzoek:
       - *Misty Fields* en *Valkhof Festival*: bronnen spraken elkaar tegen
         over de exacte 2026-datum — extra check waard.
       - *Welcome To The Future* en *ZeeZout*: zwakke/tegenstrijdige bronnen
         of er überhaupt een 2026-editie is.
-- [ ] **Google Search Console instellen** — property toevoegen voor
-      festivaldiscounter.nl, sitemap (`/sitemap.xml`) indienen.
+- [x] **Google Search Console ingesteld** — property + sitemap (`/sitemap.xml`)
+      ingediend. Sitemap bereikbaar (200, in smoke-test bevestigd); GSC-property
+      staat in je eigen Google-account (niet extern te verifiëren).
 - [x] **Web Analytics ingesteld** (2026-07-04) — begonnen met Plausible, maar
       overgestapt op **Vercel Web Analytics** (gratis tier, al op Vercel,
       cookieloos). `<Analytics />` in `layout.tsx`; kliks op "Bekijk tickets"
@@ -40,10 +41,12 @@ Dit bestand houdt bij wat er nog openstaat vóór/tijdens de lancering.
 
 ## Ik pak dit op zodra relevant
 
-- [ ] **`NEXT_PUBLIC_SITE_URL` bijwerken + redeploy** naar
+- [x] **`NEXT_PUBLIC_SITE_URL` bijwerken + redeploy** naar
       `https://festivaldiscounter.nl` zodra het domein volledig werkt (deze
       waarde wordt bij het bouwen ingebakken, dus vereist een nieuwe build).
-- [ ] **Smoke-test herhalen** op het eigen domein na de domeinswitch.
+- [x] **Smoke-test op eigen domein** — 9/9 groen op
+      `https://festivaldiscounter.nl` (2026-07-04, na de domeinswitch én na de
+      admin-deploy).
 - [ ] **Eindreview** van de volledige implementatie.
 - [ ] **Structured data + Lighthouse-check** — Rich Results Test en een
       Lighthouse-meting op homepage + festivalpagina (Performance/SEO ≥ 90,
@@ -59,3 +62,9 @@ Dit bestand houdt bij wat er nog openstaat vóór/tijdens de lancering.
 - Database live met 6 gepubliceerde festivals + 1 artikel; 69 festivals +
   5 artikelen klaar in `seed_full.sql`, wachtend op review.
 - Klik-tracking bewezen werkend (`/uit/[offerId]` logt naar Supabase).
+- Eigen domein live: apex + www op Vercel, smoke 9/9 (2026-07-04).
+- **Admin-dashboard (fase 2a) live op `/admin`** (2026-07-04): login (wachtwoord
+  + HMAC-cookie), festivals + ticket-aanbieders CRUD/publiceren, bulk-review-
+  wachtrij. 94 tests groen, gereviewd (goedgekeurd), auth runtime-geverifieerd.
+  `ADMIN_PASSWORD`/`ADMIN_SESSION_SECRET` staan in Vercel (prod `/admin` geeft
+  correct 307 → login). Spec/plan in `docs/superpowers/`.

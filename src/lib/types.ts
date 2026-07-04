@@ -56,3 +56,29 @@ export interface Article {
   seo_description: string;
   published_at: string | null;
 }
+
+export type ReviewStatus = "pending" | "approved" | "rejected" | "failed";
+
+export interface PriceCheck {
+  id: string;
+  ticket_offer_id: string;
+  status: ReviewStatus;
+  scraped_price: number | null;
+  scraped_availability: Availability | null;
+  failure_reason: string | null;
+  checked_at: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+}
+
+export interface OfferSuggestion {
+  id: string;
+  festival_id: string;
+  provider: Provider;
+  detected_url: string;
+  affiliate_url: string | null;
+  status: ReviewStatus;
+  detected_at: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+}

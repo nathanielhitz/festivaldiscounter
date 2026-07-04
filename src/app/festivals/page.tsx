@@ -16,7 +16,7 @@ import { buildFilterHref, type FestivalFilterState } from "@/lib/filter-link";
 const getCachedUpcomingFestivals = unstable_cache(
   () => getUpcomingFestivals(),
   ["festivals-overzicht"],
-  { revalidate: 3600 }
+  { revalidate: 3600, tags: ["festivals"] }
 );
 
 export const metadata: Metadata = {

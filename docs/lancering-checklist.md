@@ -25,9 +25,15 @@ Dit bestand houdt bij wat er nog openstaat vóór/tijdens de lancering.
         of er überhaupt een 2026-editie is.
 - [ ] **Google Search Console instellen** — property toevoegen voor
       festivaldiscounter.nl, sitemap (`/sitemap.xml`) indienen.
-- [ ] **Plausible Analytics instellen** — site aanmaken op plausible.io,
-      daarna `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=festivaldiscounter.nl` invullen in
-      de Vercel environment variables (Production).
+- [ ] **Plausible Analytics instellen** — site aanmaken op plausible.io.
+      Kopieer de volledige script-URL uit het dashboard (nieuwe snippet,
+      `https://plausible.io/js/pa-XXXX.js`) en zet die als
+      `NEXT_PUBLIC_PLAUSIBLE_SRC=...` in de Vercel environment variables
+      (Production), daarna redeployen. Daarna in het Plausible-dashboard onder
+      *Goals* een custom event **`Ticket klik`** toevoegen — dan zie je de
+      affiliate-kliks (met props `festival` + `aanbieder`) in Plausible. De
+      snippet en klik-events zitten al in de code (`layout.tsx` + `TicketLink`);
+      ze gaan live zodra de env-var gezet is.
 - [ ] **Built Titling-fontlicentie** (optioneel) — koop de webfontlicentie
       (fontspring.com / Typodermic) en plaats als
       `public/fonts/built-titling.woff2`. Tot die tijd valt de site netjes

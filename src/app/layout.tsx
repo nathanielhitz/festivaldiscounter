@@ -16,18 +16,25 @@ export const metadata: Metadata = {
   openGraph: { locale: "nl_NL", type: "website", images: ["/og-default.png"] },
 };
 
-const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
+// Volledige script-URL uit het Plausible-dashboard (bevat het site-specifieke ID).
+// Alleen gezet in Vercel Production, zodat localhost/preview niet meetellen.
+const plausibleSrc = process.env.NEXT_PUBLIC_PLAUSIBLE_SRC;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="nl">
       <body className="flex min-h-screen flex-col">
-        {plausibleDomain && (
-          <Script
-            strategy="afterInteractive"
-            data-domain={plausibleDomain}
-            src="https://plausible.io/js/script.js"
-          />
+        {plausibleSrc && (
+          <>
+            <Script async strategy="afterInteractive" src={plausibleSrc} />
+            {/* Nieuwe Plausible-snippet: definieert window.plausible (+ .init) en
+                queuet events die afgaan vóórdat het script geladen is (bv. een
+                snelle klik op "Bekijk tickets"). plausible.init() bootstrapt de
+                pageview- en SPA-tracking. */}
+            <Script id="plausible-init" strategy="afterInteractive">
+              {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`}
+            </Script>
+          </>
         )}
         <a
           href="#main"

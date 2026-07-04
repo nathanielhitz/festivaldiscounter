@@ -3,6 +3,7 @@ import {
   AVAILABILITY_LABELS, PROVIDER_LABELS, PROVIDER_SUB,
   formatCheckedDate, formatPrice, minPrice,
 } from "@/lib/format";
+import TicketLink from "@/components/TicketLink";
 
 function sortOffers(offers: TicketOffer[], soldOutFestival: boolean): TicketOffer[] {
   return [...offers].sort((a, b) => {
@@ -80,14 +81,11 @@ export default function TicketComparator({ festival }: { festival: FestivalWithO
                   <span className="text-sm font-medium text-mut">prijs bij aanbieder</span>
                 )}
               </p>
-              <a
-                href={`/uit/${o.id}`}
-                rel="sponsored nofollow"
-                aria-label={`Bekijk tickets bij ${PROVIDER_LABELS[o.provider]}`}
-                className="whitespace-nowrap rounded-sm bg-accent px-4 py-2.5 text-center text-sm font-bold text-ground hover:bg-accent-deep"
-              >
-                Bekijk tickets
-              </a>
+              <TicketLink
+                offerId={o.id}
+                festival={festival.name}
+                aanbieder={PROVIDER_LABELS[o.provider]}
+              />
             </li>
           );
         })}

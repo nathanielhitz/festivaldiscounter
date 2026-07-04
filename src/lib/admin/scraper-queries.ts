@@ -164,10 +164,15 @@ export async function updateOfferPriceAvailability(
   offerId: string,
   values: { price_from: number | null; availability: Availability }
 ): Promise<void> {
-  const { error } = await supabase
-    .from("ticket_offers")
-    .update({ ...values, last_checked_at: new Date().toISOString() })
-    .eq("id", offerId);
+  // Een puur sold-out-signaal heeft geen prijs (price_from === null). Dan alleen de
+  // beschikbaarheid bijwerken en de bestaande prijs behouden — niet met null overschrijven.
+  const patch: { availability: Availability; last_checked_at: string; price_from?: number } = {
+    availability: values.availability,
+    last_checked_at: new Date().toISOString(),
+  };
+  if (values.price_from !== null) patch.price_from = values.price_from;
+
+  const { error } = await supabase.from("ticket_offers").update(patch).eq("id", offerId);
   if (error) throw error;
 }
 

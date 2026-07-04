@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { PRICE_SCRAPE_CONFIG } from "@/lib/scraper/config";
-import { parsePrice, detectSoldOut } from "@/lib/scraper/parse";
+import { parsePrice, detectSoldOut, parseOfferFromJsonLd } from "@/lib/scraper/parse";
+import type { Availability } from "@/lib/types";
 import {
   ticketswapCandidateUrl,
   ticketswapAffiliate,
@@ -53,20 +54,41 @@ async function runPriceScrape(): Promise<number> {
     if (!target) continue;
     try {
       const html = await fetchHtml(target.url);
-      const price = parsePrice(html, cfg.priceSelector);
-      const soldOut = detectSoldOut(html, cfg.soldOutKeywords);
+
+      // Prijs + (bij JSON-LD) beschikbaarheid volgens de gekozen strategie.
+      const jsonld = cfg.strategy === "jsonld" ? parseOfferFromJsonLd(html) : null;
+      const price = jsonld
+        ? jsonld.price
+        : cfg.priceSelector
+          ? parsePrice(html, cfg.priceSelector)
+          : null;
+
+      // Sold-out: keyword-signaal óf een expliciete JSON-LD sold_out.
+      const soldOut = detectSoldOut(html, cfg.soldOutKeywords) || jsonld?.availability === "sold_out";
+
+      // Beschikbaarheid: sold-out wint, anders JSON-LD-waarde, anders "available".
+      const availability: Availability = soldOut
+        ? "sold_out"
+        : (jsonld?.availability ?? "available");
+
+      // Alleen "failed" als we écht niets nuttigs vonden (geen prijs, geen status-signaal).
+      const hasSignal = price !== null || soldOut || jsonld?.availability != null;
+
       await supersedeAutoPriceChecks(target.offerId);
-      if (price === null && !soldOut) {
+      if (!hasSignal) {
         await insertPriceCheck({
           ticket_offer_id: target.offerId, status: "failed",
           scraped_price: null, scraped_availability: null,
-          failure_reason: `Prijs-selector '${cfg.priceSelector}' leverde niets op`,
+          failure_reason:
+            cfg.strategy === "jsonld"
+              ? "Geen schema.org Offer in de HTML gevonden"
+              : `Prijs-selector '${cfg.priceSelector ?? "(geen)"}' leverde niets op`,
         });
       } else {
         await insertPriceCheck({
           ticket_offer_id: target.offerId, status: "pending",
           scraped_price: price,
-          scraped_availability: soldOut ? "sold_out" : "available",
+          scraped_availability: availability,
           failure_reason: null,
         });
         count++;

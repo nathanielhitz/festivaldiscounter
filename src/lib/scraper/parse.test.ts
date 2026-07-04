@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parsePrice, detectSoldOut } from "@/lib/scraper/parse";
+import { parsePrice, detectSoldOut, parseOfferFromJsonLd } from "@/lib/scraper/parse";
 
 describe("parsePrice", () => {
   it("leest een NL-genoteerde prijs uit het geselecteerde element", () => {
@@ -37,5 +37,64 @@ describe("detectSoldOut", () => {
   it("is onwaar als geen enkel keyword voorkomt", () => {
     const html = `<body><button>Koop tickets</button></body>`;
     expect(detectSoldOut(html, ["uitverkocht", "sold out"])).toBe(false);
+  });
+});
+
+describe("parseOfferFromJsonLd", () => {
+  it("leest prijs + beschikbaarheid uit een schema.org Offer (Bospop-vorm)", () => {
+    const html = `<html><head><script type="application/ld+json">${JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "MusicEvent",
+      name: "Bospop",
+      offers: {
+        "@type": "Offer",
+        price: "117.50",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/LimitedAvailability",
+      },
+    })}</script></head><body>Bospop</body></html>`;
+    expect(parseOfferFromJsonLd(html)).toEqual({ price: 117.5, availability: "limited" });
+  });
+
+  it("vindt de Offer binnen een @graph-wrapper", () => {
+    const html = `<script type="application/ld+json">${JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "WebSite", name: "x" },
+        { "@type": "Event", offers: { "@type": "Offer", price: 89, availability: "https://schema.org/InStock" } },
+      ],
+    })}</script>`;
+    expect(parseOfferFromJsonLd(html)).toEqual({ price: 89, availability: "available" });
+  });
+
+  it("pakt uit een array van offers de eerste met bruikbare data", () => {
+    const html = `<script type="application/ld+json">${JSON.stringify({
+      "@type": "Event",
+      offers: [
+        { "@type": "Offer", price: "45,00", availability: "https://schema.org/SoldOut" },
+        { "@type": "Offer", price: "99,00" },
+      ],
+    })}</script>`;
+    expect(parseOfferFromJsonLd(html)).toEqual({ price: 45, availability: "sold_out" });
+  });
+
+  it("ondersteunt AggregateOffer met lowPrice", () => {
+    const html = `<script type="application/ld+json">${JSON.stringify({
+      "@type": "Event",
+      offers: { "@type": "AggregateOffer", lowPrice: "75.00", priceCurrency: "EUR" },
+    })}</script>`;
+    expect(parseOfferFromJsonLd(html)).toEqual({ price: 75, availability: null });
+  });
+
+  it("geeft null/null als er geen ld+json is", () => {
+    expect(parseOfferFromJsonLd("<html><body>geen data</body></html>")).toEqual({
+      price: null,
+      availability: null,
+    });
+  });
+
+  it("slaat een kapot ld+json-blok over zonder te crashen", () => {
+    const html = `<script type="application/ld+json">{ kapot json ]</script>`;
+    expect(parseOfferFromJsonLd(html)).toEqual({ price: null, availability: null });
   });
 });

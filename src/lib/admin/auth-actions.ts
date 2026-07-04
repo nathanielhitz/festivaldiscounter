@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { checkPassword } from "./auth";
-import { adminPassword, startSession, endSession } from "./session";
+import { adminPassword, requireAdmin, startSession, endSession } from "./session";
 import type { ActionState } from "./types";
 
 export async function loginAction(_prev: ActionState, form: FormData): Promise<ActionState> {
@@ -16,6 +16,7 @@ export async function loginAction(_prev: ActionState, form: FormData): Promise<A
 }
 
 export async function logoutAction(): Promise<void> {
+  await requireAdmin();
   await endSession();
   redirect("/admin/login");
 }

@@ -13,16 +13,19 @@ nog openstaat vóór/tijdens de lancering.
 - [ ] **Affiliate-aanvragen indienen** — TradeTracker, Awin, Booking.com,
       Bol.com. Site is hiervoor gereed (werkende vergelijker + Over/Contact/
       Privacy-pagina's). *(loopt al)*
-- [ ] **Dataset doorlopen en publiceren** — `supabase/seed_full.sql` bevat 69
-      nieuwe festivals + 5 gidsartikelen, allemaal met `published = false` in
-      Supabase. Per rij controleren en op `true` zetten in de Supabase Table
-      Editor zodra akkoord. **Kan nu comfortabel via de admin:** `/admin/review`
-      (bulk-publiceer/overslaan/verwijder) of per festival op `/admin/festivals`.
-      Twee aandachtspunten uit het onderzoek:
-      - *Misty Fields* en *Valkhof Festival*: bronnen spraken elkaar tegen
-        over de exacte 2026-datum — extra check waard.
-      - *Welcome To The Future* en *ZeeZout*: zwakke/tegenstrijdige bronnen
-        of er überhaupt een 2026-editie is.
+- [~] **Dataset doorlopen en publiceren** — grotendeels gedaan (2026-07-04):
+      **44 festivals gepubliceerd** (33 komende in bulk gepubliceerd na review).
+      Nog **31 concept**: 29 zijn al verstreken (einddatum < 2026-07-04 — bewust
+      als concept gelaten, research blijft bruikbaar voor 2027), + 2 aparte:
+      - *Valkhof Festival* (17 jul, komend) — datum/editie nog te verifiëren
+        vóór publiceren. *Misty Fields, Welcome To The Future, ZeeZout* (ook
+        twijfel) zijn inmiddels verstreken, dus niet urgent.
+      - *Mystic Garden Festival* — geannuleerd, niet gepubliceerd.
+      Aandachtspunt: **elk festival heeft maar 1 ticket-aanbieder** → de
+      vergelijker is mager. Extra doorverkoop-aanbieders toevoegen (per festival
+      op `/admin/festivals/[id]`) is de grootste kwaliteitswinst. Foto-backfill
+      (`fetch-images`) gaf 0 nieuwe treffers voor de resterende sites; 17
+      gepubliceerde festivals draaien op de gradient-fallback tot handmatige foto.
 - [x] **Google Search Console ingesteld** — property + sitemap (`/sitemap.xml`)
       ingediend. Sitemap bereikbaar (200, in smoke-test bevestigd); GSC-property
       staat in je eigen Google-account (niet extern te verifiëren).

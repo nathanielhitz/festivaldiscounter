@@ -1,15 +1,29 @@
 import Link from "next/link";
 import FestivalCard from "@/components/FestivalCard";
+import FestivalSearch from "@/components/FestivalSearch";
 import { getUpcomingFestivals } from "@/lib/queries";
 
 export const revalidate = 3600;
 
 export default async function Home() {
-  const festivals = await getUpcomingFestivals(6);
+  // Alle aankomende festivals: de volledige (lichte) lijst voedt de live
+  // autocomplete-zoekbalk client-side; de "Binnenkort"-grid toont de eerste 6.
+  const alleFestivals = await getUpcomingFestivals();
+  const festivals = alleFestivals.slice(0, 6);
+  const zoekFestivals = alleFestivals.map((f) => ({
+    slug: f.slug,
+    name: f.name,
+    start_date: f.start_date,
+    end_date: f.end_date,
+  }));
 
   return (
     <main>
-      <section className="relative overflow-hidden border-b border-line">
+      {/* Geen overflow-hidden hier: de autocomplete-dropdown is een absolute
+          overlay die onder het zoekveld uit de hero mag steken. De radiale
+          gradient hieronder is een background op een inset-0 div en schildert
+          sowieso niet buiten zijn eigen box, dus clipping is niet nodig. */}
+      <section className="relative border-b border-line">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
@@ -32,16 +46,7 @@ export default async function Home() {
             Vergelijk ticketprijzen van officiële verkoop én doorverkoop voor alle grote
             Nederlandse festivals, op één plek.
           </p>
-          <form action="/festivals" className="mt-8 flex max-w-xl gap-1.5 rounded border border-line bg-panel p-1.5">
-            <input
-              type="search"
-              name="q"
-              placeholder="Zoek een festival…"
-              aria-label="Zoek een festival"
-              className="min-w-0 flex-1 rounded-sm bg-transparent px-3.5 py-3 text-ink placeholder:text-mut focus:outline-2 focus:outline-offset-2 focus:outline-accent"
-            />
-            <button className="rounded-sm bg-accent px-6 font-bold text-ground">Zoek</button>
-          </form>
+          <FestivalSearch festivals={zoekFestivals} />
         </div>
       </section>
 

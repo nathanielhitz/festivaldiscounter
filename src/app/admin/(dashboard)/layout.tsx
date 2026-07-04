@@ -14,6 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin" className="hover:text-accent">Dashboard</Link>
           <Link href="/admin/festivals" className="hover:text-accent">Festivals</Link>
           <Link href="/admin/review" className="hover:text-accent">Review-wachtrij</Link>
+          <Link href="/admin/scrapers" className="hover:text-accent">Scrapers</Link>
         </nav>
         <form action={logoutAction}>
           <button className="text-sm text-mut hover:text-accent">Uitloggen</button>

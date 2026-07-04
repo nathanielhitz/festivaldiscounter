@@ -205,7 +205,10 @@ export async function insertTicketOfferFromSuggestion(row: {
     availability: "unknown",
     last_checked_at: new Date().toISOString(),
   });
-  if (error) throw error;
+  // 23505 = er bestaat al een offer voor (festival, provider): dan is de bedoeling
+  // van het goedkeuren (deze aanbieder hoort erbij) al vervuld. Behandel als succes
+  // zodat de suggestie netjes op 'approved' gezet kan worden i.p.v. vast te lopen.
+  if (error && error.code !== "23505") throw error;
 }
 
 export async function updateOfferSuggestionStatus(

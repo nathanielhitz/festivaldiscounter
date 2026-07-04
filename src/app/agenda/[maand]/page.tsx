@@ -22,6 +22,7 @@ export async function generateMetadata({
   return {
     title: `Festivals in ${label}: data en ticketprijzen`,
     description: `Welke festivals zijn er in ${label}? Alle Nederlandse festivals in ${label} met data, locaties en de laagste ticketprijzen.`,
+    alternates: { canonical: `/agenda/${maand}` },
   };
 }
 

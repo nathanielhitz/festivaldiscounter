@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Privacyverklaring",
   description: "Hoe FestivalDiscounter.nl omgaat met je gegevens.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

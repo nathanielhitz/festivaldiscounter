@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Goedkope festivaltickets: laagste prijzen van dit moment",
   description:
     "De goedkoopste festivaltickets van Nederland op een rij, gesorteerd op laagste vanaf-prijs. Dagelijks gecheckt bij officiële verkoop en doorverkoop.",
+  alternates: { canonical: "/goedkope-festivaltickets" },
 };
 
 export default async function GoedkopeTicketsPage() {

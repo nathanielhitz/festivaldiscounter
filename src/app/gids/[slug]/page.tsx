@@ -20,7 +20,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const artikel = await getArticleBySlug(slug);
   if (!artikel) return {};
-  return { title: artikel.seo_title || artikel.title, description: artikel.seo_description };
+  return {
+    title: artikel.seo_title || artikel.title,
+    description: artikel.seo_description,
+    alternates: { canonical: `/gids/${slug}` },
+  };
 }
 
 export default async function ArtikelPage({

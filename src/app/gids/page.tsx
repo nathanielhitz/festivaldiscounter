@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Festivalgids: koopgidsen en tips",
   description:
     "Praktische gidsen over festivaltickets: veilig doorverkoop kopen, prijzen vergelijken en slim je festivalweekend plannen.",
+  alternates: { canonical: "/gids" },
 };
 
 export default async function GidsPage() {

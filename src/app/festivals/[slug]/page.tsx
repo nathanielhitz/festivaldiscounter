@@ -32,6 +32,7 @@ export async function generateMetadata({
     description: `${festival.name} ${jaar} in ${festival.city}: ${formatDateRange(
       festival.start_date, festival.end_date
     )}. Vergelijk ticketprijzen${prijs != null ? ` vanaf ${formatPrice(prijs)}` : ""} van officiële verkoop en doorverkoop.`,
+    alternates: { canonical: `/festivals/${slug}` },
     ...(festival.image_url ? { openGraph: { images: [festival.image_url] } } : {}),
   };
 }

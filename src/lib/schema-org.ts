@@ -8,6 +8,17 @@ const AVAILABILITY_SCHEMA: Partial<Record<Availability, string>> = {
   // unknown: bewust geen mapping; het veld wordt dan weggelaten.
 };
 
+// Zet het vrije line-up-tekstveld om naar losse artiestennamen. De data is in de
+// praktijk een komma- (soms nieuwe-regel-)gescheiden lijst; we splitsen daarop,
+// trimmen en gooien lege stukken weg. Google toont `performer` in Event-rich-results.
+function parseLineup(lineup: string | null): string[] {
+  if (!lineup) return [];
+  return lineup
+    .split(/[,\n]/)
+    .map((name) => name.trim())
+    .filter((name) => name.length > 0);
+}
+
 export function buildEventSchema(festival: Festival, offers: TicketOffer[], base: string) {
   const offerList = offers
     .filter((o) => o.price_from != null)
@@ -22,6 +33,11 @@ export function buildEventSchema(festival: Festival, offers: TicketOffer[], base
         ...(availability ? { availability } : {}),
       };
     });
+
+  const performers = parseLineup(festival.lineup).map((name) => ({
+    "@type": "PerformingGroup" as const,
+    name,
+  }));
 
   return {
     "@context": "https://schema.org",
@@ -47,7 +63,30 @@ export function buildEventSchema(festival: Festival, offers: TicketOffer[], base
         addressCountry: festival.country,
       },
     },
+    ...(performers.length ? { performer: performers } : {}),
     ...(offerList.length ? { offers: offerList } : {}),
+  };
+}
+
+// Merk-brede structured data voor de homepage: helpt Google het merk te herkennen
+// (knowledge panel / sitelinks). Geen SearchAction: de site heeft geen server-side
+// zoek-resultatenpagina (de zoekbalk is client-side autocomplete).
+export function buildOrganizationSchema(base: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization" as const,
+    name: "FestivalDiscounter.nl",
+    url: base,
+    logo: `${base}/og-default.png`,
+  };
+}
+
+export function buildWebSiteSchema(base: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite" as const,
+    name: "FestivalDiscounter.nl",
+    url: base,
   };
 }
 

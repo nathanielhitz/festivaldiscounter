@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Over FestivalDiscounter",
   description: "Wie we zijn, hoe we ticketprijzen vergelijken en hoe we geld verdienen.",
+  alternates: { canonical: "/over" },
 };
 
 export default function OverPage() {

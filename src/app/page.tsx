@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import FestivalCard from "@/components/FestivalCard";
 import FestivalSearch from "@/components/FestivalSearch";
+import JsonLd from "@/components/JsonLd";
 import { getUpcomingFestivals } from "@/lib/queries";
+import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/schema-org";
+import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   // Alle aankomende festivals: de volledige (lichte) lijst voedt de live
@@ -19,6 +27,8 @@ export default async function Home() {
 
   return (
     <main>
+      <JsonLd data={buildOrganizationSchema(SITE_URL)} />
+      <JsonLd data={buildWebSiteSchema(SITE_URL)} />
       {/* Geen overflow-hidden hier: de autocomplete-dropdown is een absolute
           overlay die onder het zoekveld uit de hero mag steken. De radiale
           gradient hieronder is een background op een inset-0 div en schildert

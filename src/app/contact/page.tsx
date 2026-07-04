@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact",
   description: "Neem contact op met FestivalDiscounter.nl.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {

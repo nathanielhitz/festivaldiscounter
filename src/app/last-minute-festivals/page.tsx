@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Last-minute festivals: binnen 30 dagen",
   description:
     "Deze festivals starten binnen 30 dagen. Ideaal voor een last-minute festivalweekend: doorverkoopprijzen dalen vaak vlak voor de festivaldatum.",
+  alternates: { canonical: "/last-minute-festivals" },
 };
 
 export default async function LastMinutePage() {

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { buildEventSchema, buildFaqSchema, buildBreadcrumbSchema } from "@/lib/schema-org";
+import {
+  buildEventSchema,
+  buildFaqSchema,
+  buildBreadcrumbSchema,
+  buildOrganizationSchema,
+  buildWebSiteSchema,
+} from "@/lib/schema-org";
 import type { Festival, TicketOffer } from "@/lib/types";
 
 const festival = {
@@ -67,6 +73,52 @@ describe("buildEventSchema", () => {
       "https://x.nl"
     );
     expect(s.offers![0].price).toBe(240.57);
+  });
+
+  it("zet de line-up om naar performer-entries (komma-gescheiden)", () => {
+    const s = buildEventSchema(
+      { ...festival, lineup: "Armin van Buuren, Oliver Heldens , Maddix" },
+      [],
+      "https://x.nl"
+    );
+    expect(s.performer).toEqual([
+      { "@type": "PerformingGroup", name: "Armin van Buuren" },
+      { "@type": "PerformingGroup", name: "Oliver Heldens" },
+      { "@type": "PerformingGroup", name: "Maddix" },
+    ]);
+  });
+
+  it("splitst de line-up ook op nieuwe regels en negeert lege stukken", () => {
+    const s = buildEventSchema(
+      { ...festival, lineup: "Angerfist\nNosferatu,  \n Tha Playah" },
+      [],
+      "https://x.nl"
+    );
+    expect(s.performer?.map((p) => p.name)).toEqual(["Angerfist", "Nosferatu", "Tha Playah"]);
+  });
+
+  it("laat performer weg zonder line-up", () => {
+    const s = buildEventSchema({ ...festival, lineup: null }, [], "https://x.nl");
+    expect(s).not.toHaveProperty("performer");
+  });
+});
+
+describe("buildOrganizationSchema", () => {
+  it("bouwt een Organization met naam, url en logo", () => {
+    const s = buildOrganizationSchema("https://festivaldiscounter.nl");
+    expect(s["@type"]).toBe("Organization");
+    expect(s.url).toBe("https://festivaldiscounter.nl");
+    expect(s.logo).toContain("https://festivaldiscounter.nl");
+    expect(s.name).toBeTruthy();
+  });
+});
+
+describe("buildWebSiteSchema", () => {
+  it("bouwt een WebSite met naam en url", () => {
+    const s = buildWebSiteSchema("https://festivaldiscounter.nl");
+    expect(s["@type"]).toBe("WebSite");
+    expect(s.url).toBe("https://festivaldiscounter.nl");
+    expect(s.name).toBeTruthy();
   });
 });
 

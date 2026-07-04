@@ -96,16 +96,20 @@ async function runMarketplaceDetection(): Promise<{ suggested: number; skipped: 
     try {
       const url = ticketswapCandidateUrl(f.slug);
       const html = await fetchHtml(url); // gooit bij 404/timeout → "niet gevonden"
-      if (!matchesFestival(html, f.name)) continue;
-      await insertOfferSuggestion({
-        festival_id: f.id, provider: "ticketswap",
-        detected_url: url, affiliate_url: ticketswapAffiliate(url, affiliateId),
-      });
-      suggested++;
+      if (matchesFestival(html, f.name)) {
+        await insertOfferSuggestion({
+          festival_id: f.id, provider: "ticketswap",
+          detected_url: url, affiliate_url: ticketswapAffiliate(url, affiliateId),
+        });
+        suggested++;
+      }
     } catch {
       // niet gevonden / netwerkfout: geen ruis in de wachtrij.
+    } finally {
+      // altijd wachten tussen requests (ook bij een naam-mismatch of fout),
+      // zodat we netjes blijven richting de doelsites.
+      await sleep(REQUEST_DELAY_MS);
     }
-    await sleep(REQUEST_DELAY_MS);
   }
   return { suggested, skipped };
 }

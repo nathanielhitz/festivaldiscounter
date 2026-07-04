@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         <p>FestivalDiscounter.nl is zuinig op je gegevens. Dit is wat we wél en niet verzamelen.</p>
         <h2>Geen cookies, anonieme statistieken</h2>
         <p>
-          We gebruiken Plausible Analytics: privacyvriendelijke, cookieloze bezoekersstatistieken
+          We gebruiken Vercel Web Analytics: privacyvriendelijke, cookieloze bezoekersstatistieken
           waarbij geen persoonsgegevens of IP-adressen worden opgeslagen. Daarom zie je bij ons ook
           geen cookiebanner.
         </p>

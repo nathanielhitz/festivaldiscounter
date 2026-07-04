@@ -1,11 +1,11 @@
 "use client";
 
-import { trackTicketClick } from "@/lib/plausible";
+import { trackTicketClick } from "@/lib/analytics";
 
 // De affiliate-link uit TicketComparator, als client component zodat een klik
-// ook een Plausible-event kan afvuren. De navigatie zelf is een gewone <a href>
-// naar /uit/[offerId] (server-redirect + Supabase-logging); Plausible verstuurt
-// het event via navigator.sendBeacon, dus het overleeft het verlaten van de pagina.
+// ook een analytics-event kan afvuren. De navigatie zelf is een gewone <a href>
+// naar /uit/[offerId] (server-redirect + Supabase-logging); het event wordt via
+// sendBeacon verstuurd, dus het overleeft het verlaten van de pagina.
 export default function TicketLink({
   offerId,
   festival,

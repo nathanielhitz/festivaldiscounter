@@ -16,13 +16,15 @@ import {
 } from "@/lib/admin/scraper-queries";
 
 export const dynamic = "force-dynamic";
-// LET OP: Vercel Hobby cap = 60s, Pro = tot 300s. Houd de curated set + MAX_MARKETPLACE
-// klein genoeg dat een run binnen de limiet van je plan blijft (zie de sleep/timing hieronder).
-export const maxDuration = 300;
+// Vercel Hobby-plan: harde limiet van 60s per functie. De onderstaande limieten
+// (fetch-timeout, request-delay, MAX_MARKETPLACE) houden de worst-case run daaronder.
+// Op Pro kan dit naar 300 en mag MAX_MARKETPLACE weer omhoog.
+export const maxDuration = 60;
 
 const UA = "FestivalDiscounter-PriceCheck/1.0 (+https://festivaldiscounter.nl)";
+const FETCH_TIMEOUT_MS = 8000;   // per request; korter dan de 60s-functielimiet
 const REQUEST_DELAY_MS = 1000;   // netjes richting de doelsites
-const MAX_MARKETPLACE = 15;      // max festivals per run voor capaciteit B (tijdsbudget)
+const MAX_MARKETPLACE = 4;       // max festivals per run voor capaciteit B (tijdsbudget Hobby)
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Kies willekeurig maximaal `n` items, zodat over meerdere dagen alle festivals
@@ -40,7 +42,7 @@ function sample<T>(items: T[], n: number): T[] {
 async function fetchHtml(url: string): Promise<string> {
   const res = await fetch(url, {
     headers: { "user-agent": UA },
-    signal: AbortSignal.timeout(10_000),
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.text();
@@ -111,6 +113,11 @@ async function runPriceScrape(): Promise<number> {
 async function runMarketplaceDetection(): Promise<{ suggested: number; skipped: number }> {
   let suggested = 0;
   const affiliateId = process.env.TICKETSWAP_AFFILIATE_ID || null;
+  // Zonder affiliate-ID heeft een TicketSwap-suggestie geen affiliate-link én is
+  // detectie momenteel toch niet werkbaar (WAAP-botbescherming blokkeert de fetch,
+  // event-URL bevat een niet-afleidbare hash). Sla capaciteit B dan volledig over —
+  // scheelt zinloze requests en houdt de run ruim binnen de Hobby-limiet.
+  if (!affiliateId) return { suggested: 0, skipped: 0 };
   const all = await getFestivalsForMarketplaceCheck().catch(() => []);
   const batch = sample(all, MAX_MARKETPLACE);
   const skipped = all.length - batch.length;

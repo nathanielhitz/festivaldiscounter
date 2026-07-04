@@ -51,9 +51,17 @@ nog openstaat vóór/tijdens de lancering.
       `https://festivaldiscounter.nl` (2026-07-04, na de domeinswitch én na de
       admin-deploy).
 - [ ] **Eindreview** van de volledige implementatie.
-- [ ] **Structured data + Lighthouse-check** — Rich Results Test en een
-      Lighthouse-meting op homepage + festivalpagina (Performance/SEO ≥ 90,
-      spec-doel).
+- [x] **Structured data + Lighthouse-check** (2026-07-04) — Lighthouse (mobile,
+      live): festivalpagina **100/100/100/100**, homepage **Perf 88** ·
+      SEO/Access/Best-Practices 100. SEO-doel ≥90 gehaald; Perf-doel gehaald op
+      festivalpagina, homepage 88 (oorzaak: grote externe festivalfoto's via
+      platte `<img>`). Doorgevoerd: self-referencing **canonical** op alle
+      content-pagina's (was alleen /festivals), Event-schema verrijkt met
+      **performer** (lineup), **Organization+WebSite** JSON-LD op home.
+      Uitgesteld als eigen project: **festivalfoto's zelf hosten (Supabase
+      Storage)** → tilt homepage-Perf over 90 én lost de 17 gradient-fallbacks +
+      externe-afhankelijkheid op (next/image met wildcard-remotePatterns bewust
+      niet gedaan i.v.m. open-proxy-risico + crash bij onbekende domeinen).
 
 ## Al afgerond
 

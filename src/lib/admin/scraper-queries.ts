@@ -34,6 +34,14 @@ export interface FailedPriceCheck {
   ticket_offers: { url: string; festivals: { name: string } | null } | null;
 }
 
+export interface AutoAppliedPriceCheck {
+  id: string;
+  scraped_price: number | null;
+  scraped_availability: Availability | null;
+  checked_at: string;
+  ticket_offers: { festivals: { name: string } | null } | null;
+}
+
 export async function getPendingPriceChecks(): Promise<PendingPriceCheck[]> {
   const { data, error } = await supabase
     .from("price_checks")
@@ -64,6 +72,20 @@ export async function getFailedPriceChecks(): Promise<FailedPriceCheck[]> {
     .order("checked_at", { ascending: false });
   if (error) throw error;
   return (data ?? []) as unknown as FailedPriceCheck[];
+}
+
+// Recent automatisch toegepaste prijs-updates (auto-approve, geen mens aan te pas
+// gekomen) — puur ter inzage/vertrouwen op de reviewpagina, geen actie nodig.
+export async function getRecentAutoAppliedPriceChecks(limit = 20): Promise<AutoAppliedPriceCheck[]> {
+  const { data, error } = await supabase
+    .from("price_checks")
+    .select("id, scraped_price, scraped_availability, checked_at, ticket_offers(festivals(name))")
+    .eq("status", "approved")
+    .eq("reviewed_by", "auto")
+    .order("checked_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as unknown as AutoAppliedPriceCheck[];
 }
 
 // --- Reads/writes voor de cron ---------------------------------------------
@@ -162,6 +184,31 @@ export async function insertPriceCheck(row: {
   failure_reason: string | null;
 }): Promise<void> {
   const { error } = await supabase.from("price_checks").insert(row);
+  if (error) throw error;
+}
+
+// Past een auto-approved prijs/beschikbaarheid meteen live toe (geen wachtrij)
+// en logt 'm als 'approved'-rij (reviewed_by: 'auto') zodat de reviewpagina een
+// "Automatisch toegepast"-overzicht kan tonen. Alleen voor wijzigingen die
+// `evaluateAutoApprove` als laag-risico beoordeelde.
+export async function applyAutoApprovedPriceCheck(row: {
+  ticket_offer_id: string;
+  scraped_price: number | null;
+  scraped_availability: Availability;
+}): Promise<void> {
+  await updateOfferPriceAvailability(row.ticket_offer_id, {
+    price_from: row.scraped_price,
+    availability: row.scraped_availability,
+  });
+  const { error } = await supabase.from("price_checks").insert({
+    ticket_offer_id: row.ticket_offer_id,
+    status: "approved",
+    scraped_price: row.scraped_price,
+    scraped_availability: row.scraped_availability,
+    failure_reason: null,
+    reviewed_at: new Date().toISOString(),
+    reviewed_by: "auto",
+  });
   if (error) throw error;
 }
 

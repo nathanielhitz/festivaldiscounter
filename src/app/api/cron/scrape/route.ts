@@ -142,9 +142,13 @@ async function runPriceScrape(deadlineAt: number): Promise<PriceScrapeResult> {
     }
     const target = batch[i];
     const cfg = targetForSlug(target.slug);
-    const curated = isCuratedTarget(target.slug);
+    // Alleen curated targets ZONDER priceUrl zijn met de hand geverifieerd om via
+    // een kale fetch te werken (bospop/awakenings). Curated targets mét priceUrl
+    // zijn juist bekende JS-widget-sites die op Firecrawl leunen — die behandelen
+    // we bij "geen signaal" net als auto-targets (naar de render-fallback).
+    const expectsPlainFetch = isCuratedTarget(target.slug) && !cfg.priceUrl;
     try {
-      const html = await fetchHtml(target.url);
+      const html = await fetchHtml(cfg.priceUrl ?? target.url);
 
       // Prijs + (bij JSON-LD) beschikbaarheid volgens de gekozen strategie.
       const jsonld = cfg.strategy === "jsonld" ? parseOfferFromJsonLd(html) : null;
@@ -169,9 +173,9 @@ async function runPriceScrape(deadlineAt: number): Promise<PriceScrapeResult> {
 
       if (!hasSignal) {
         // Bij auto-targets is "geen JSON-LD" de verwachte uitkomst (JS-widgets) —
-        // probeer 'm zo meteen via de render-fallback. Bij curated targets is het
-        // een echte fout — die site had het eerder wél.
-        if (curated) {
+        // probeer 'm zo meteen via de render-fallback. Alleen bij een plain-fetch-
+        // target is het een echte fout — die site had het eerder wél.
+        if (expectsPlainFetch) {
           await supersedeAutoPriceChecks(target.offerId);
           await insertPriceCheck({
             ticket_offer_id: target.offerId, status: "failed",
@@ -198,10 +202,10 @@ async function runPriceScrape(deadlineAt: number): Promise<PriceScrapeResult> {
         else result.queued++;
       }
     } catch (e) {
-      // Netwerkfout/HTTP-fout: alleen bij curated targets een failed-rij; bij
-      // auto-targets proberen we het via de render-fallback (mogelijk een
-      // bot-check die Firecrawl wél doorkomt).
-      if (curated) {
+      // Netwerkfout/HTTP-fout: alleen bij een plain-fetch-target een failed-rij;
+      // anders proberen we het via de render-fallback (mogelijk een bot-check die
+      // Firecrawl wél doorkomt, of een priceUrl die JS vereist).
+      if (expectsPlainFetch) {
         await supersedeAutoPriceChecks(target.offerId).catch(() => {});
         await insertPriceCheck({
           ticket_offer_id: target.offerId, status: "failed",
@@ -222,7 +226,8 @@ async function runPriceScrape(deadlineAt: number): Promise<PriceScrapeResult> {
       if (Date.now() > deadlineAt) break;
       result.renderAttempted++;
       try {
-        const rendered = await fetchOfferViaRender(target.url, { apiKey, timeoutMs: RENDER_TIMEOUT_MS });
+        const renderUrl = targetForSlug(target.slug).priceUrl ?? target.url;
+        const rendered = await fetchOfferViaRender(renderUrl, { apiKey, timeoutMs: RENDER_TIMEOUT_MS });
         if (!rendered) continue; // Firecrawl vond ook niets bruikbaars: stil overslaan
         result.renderSucceeded++;
         const availability: Availability = rendered.availability ?? "available";

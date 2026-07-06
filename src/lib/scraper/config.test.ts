@@ -14,19 +14,26 @@ describe("targetForSlug", () => {
   });
 
   it("geeft de veilige jsonld-default voor een onbekend festival", () => {
-    const target = targetForSlug("lowlands");
+    const target = targetForSlug("dance-valley");
     expect(target).toEqual({
-      festivalSlug: "lowlands",
+      festivalSlug: "dance-valley",
       strategy: "jsonld",
       soldOutKeywords: [], // geen keyword-matching op ongeverifieerde sites
     });
+  });
+
+  it("levert een priceUrl-override voor curated JS-widget-festivals", () => {
+    const lowlands = targetForSlug("lowlands");
+    expect(lowlands.priceUrl).toBe("https://lowlands.nl/tickets/ticketinformatie/");
+    // De default-target heeft géén priceUrl.
+    expect(targetForSlug("dance-valley").priceUrl).toBeUndefined();
   });
 });
 
 describe("isCuratedTarget", () => {
   it("herkent curated en niet-curated slugs", () => {
     for (const t of PRICE_SCRAPE_CONFIG) expect(isCuratedTarget(t.festivalSlug)).toBe(true);
-    expect(isCuratedTarget("lowlands")).toBe(false);
+    expect(isCuratedTarget("dance-valley")).toBe(false);
   });
 });
 

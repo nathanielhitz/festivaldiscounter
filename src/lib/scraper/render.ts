@@ -58,7 +58,7 @@ export async function fetchOfferViaRender(
             "Vind de laagste ticketprijs (in euro's) en de beschikbaarheid van tickets voor dit festival op deze pagina.",
         },
       ],
-      only_main_content: false,
+      onlyMainContent: false,
       timeout: opts.timeoutMs,
     }),
     // Ruime marge boven Firecrawl's eigen render-timeout voor netwerklatentie.

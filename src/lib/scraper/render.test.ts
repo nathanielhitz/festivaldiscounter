@@ -64,5 +64,8 @@ describe("fetchOfferViaRender", () => {
     expect(parsedBody.url).toBe("https://example.com/tickets");
     expect(parsedBody.timeout).toBe(15000);
     expect(parsedBody.formats[0].type).toBe("json");
+    // v2 API verwacht camelCase; de snake_case-variant gaf een 400 (regressietest).
+    expect(parsedBody.onlyMainContent).toBe(false);
+    expect(parsedBody).not.toHaveProperty("only_main_content");
   });
 });

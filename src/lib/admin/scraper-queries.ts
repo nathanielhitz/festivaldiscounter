@@ -68,21 +68,49 @@ export async function getFailedPriceChecks(): Promise<FailedPriceCheck[]> {
 
 // --- Reads/writes voor de cron ---------------------------------------------
 
-// Zoekt de `official`-offer + festivalnaam bij een slug (capaciteit A).
-export async function getOfficialOfferForSlug(
-  slug: string
-): Promise<{ offerId: string; url: string; festivalName: string } | null> {
+export interface PriceScrapeCandidate {
+  slug: string;
+  offerId: string;
+  url: string;
+  currentPrice: number | null;
+  currentAvailability: Availability;
+}
+
+// Alle festivals waarvan de official-offer nachtelijk gecheckt wordt (capaciteit A):
+// gepubliceerd, niet geannuleerd en nog niet voorbij. De huidige prijs/beschikbaarheid
+// gaat mee zodat de cron ongewijzigde waarden kan overslaan (geen review-ruis).
+export async function getPriceScrapeCandidates(): Promise<PriceScrapeCandidate[]> {
+  const today = new Date().toISOString().slice(0, 10);
   const { data, error } = await supabase
     .from("festivals")
-    .select("name, ticket_offers(id, url, provider)")
-    .eq("slug", slug)
-    .maybeSingle();
+    .select("slug, ticket_offers(id, url, provider, price_from, availability)")
+    .eq("published", true)
+    .neq("status", "cancelled")
+    .gte("end_date", today);
   if (error) throw error;
-  if (!data) return null;
-  const offers = (data.ticket_offers ?? []) as { id: string; url: string; provider: Provider }[];
-  const official = offers.find((o) => o.provider === "official");
-  if (!official) return null;
-  return { offerId: official.id, url: official.url, festivalName: data.name as string };
+  const rows = (data ?? []) as unknown as {
+    slug: string;
+    ticket_offers: {
+      id: string;
+      url: string;
+      provider: Provider;
+      price_from: number | null;
+      availability: Availability;
+    }[];
+  }[];
+  return rows.flatMap((f) => {
+    const official = f.ticket_offers.find((o) => o.provider === "official");
+    if (!official) return [];
+    return [
+      {
+        slug: f.slug,
+        offerId: official.id,
+        url: official.url,
+        currentPrice: official.price_from,
+        currentAvailability: official.availability,
+      },
+    ];
+  });
 }
 
 export interface MarketplaceCandidate {
